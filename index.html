@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>獭掌柜·美业版</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --surface: #1a1814;
+    --surface2: #232018;
+    --border: #2e2b24;
+    --border-light: #3d3930;
+    --gold: #c9a84c;
+    --gold-light: #e2c97e;
+    --gold-dim: #8a6e2f;
+    --rose: #d4756a;
+    --rose-dim: #8a4a42;
+    --mint: #6aaa8e;
+    --mint-dim: #3d6b58;
+    --text: #e8e2d6;
+    --text-dim: #8a8070;
+    --text-muted: #4a4540;
+    --tag-nail: #c9a84c22;
+    --tag-lash: #d4756a22;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans SC', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── 噪点纹理背景 ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 24px 20px 80px; }
+
+  /* ── 顶部标题 ── */
+  .header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .brand-name {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 0.05em;
+  }
+  .brand-sub { font-size: 11px; color: var(--text-dim); letter-spacing: 0.12em; margin-top: 2px; }
+  .header-date { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+  /* ── 标签页 ── */
+  .tabs {
+    display: flex; gap: 2px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 28px;
+  }
+  .tab {
+    flex: 1; padding: 9px 12px;
+    border: none; background: transparent;
+    color: var(--text-dim); font-size: 13px;
+    font-family: 'Noto Sans SC', sans-serif;
+    border-radius: 7px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--surface2); color: var(--gold-light); border: 1px solid var(--border-light); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* ── 卡片 ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 11px; letter-spacing: 0.15em;
+    color: var(--text-dim); text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ── 表单元素 ── */
+  .form-row { display: grid; gap: 12px; margin-bottom: 12px; }
+  .form-row.col2 { grid-template-columns: 1fr 1fr; }
+  .form-row.col3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-row.col4 { grid-template-columns: 2fr 1fr 1fr 1fr; }
+
+  label { font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 5px; letter-spacing: 0.05em; }
+
+  input, select {
+    width: 100%; padding: 9px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Noto Sans SC', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus { border-color: var(--gold-dim); }
+  input::placeholder { color: var(--text-muted); }
+  select option { background: var(--surface2); }
+
+  .input-prefix {
+    position: relative;
+  }
+  .input-prefix span {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim); font-size: 12px; font-family: 'DM Mono', monospace;
+    pointer-events: none;
+  }
+  .input-prefix input { padding-left: 24px; }
+
+  .input-suffix { position: relative; }
+  .input-suffix span {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); font-size: 11px; pointer-events: none;
+  }
+  .input-suffix input { padding-right: 36px; }
+
+  /* ── 按钮 ── */
+  .btn {
+    padding: 9px 18px; border-radius: 8px; border: none;
+    font-size: 12px; font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+    color: #0f0e0c; font-weight: 500;
+  }
+  .btn-gold:hover { filter: brightness(1.1); }
+  .btn-ghost {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .btn-ghost:hover { border-color: var(--border-light); color: var(--text); }
+  .btn-rose {
+    background: transparent; border: 1px solid var(--rose-dim);
+    color: var(--rose); font-size: 11px; padding: 5px 10px;
+  }
+  .btn-danger { background: transparent; border: 1px solid var(--rose-dim); color: var(--rose); }
+  .btn-sm { padding: 5px 12px; font-size: 11px; }
+
+  /* ── 耗材列表 ── */
+  .material-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .material-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 80px 32px;
+    gap: 8px; align-items: center;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .material-item .cost-preview {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--gold); text-align: right;
+  }
+  .del-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--text-muted); cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .del-btn:hover { border-color: var(--rose-dim); color: var(--rose); }
+
+  .material-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 80px 32px;
+    gap: 8px; padding: 0 12px 6px;
+  }
+  .material-header span { font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; }
+
+  /* ── 平台徽章 ── */
+  .platform-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 8px; border-radius: 4px; font-size: 11px;
+  }
+  .badge-meituan { background: #ff6b0020; color: #ff8c40; border: 1px solid #ff6b0030; }
+  .badge-douyin  { background: #00f2ea18; color: #69d8d4; border: 1px solid #00f2ea28; }
+  .badge-offline { background: #6aaa8e18; color: var(--mint); border: 1px solid #6aaa8e28; }
+
+  /* ── 结果面板 ── */
+  .result-panel {
+    background: linear-gradient(135deg, #1a1814, #1f1c16);
+    border: 1px solid var(--gold-dim);
+    border-radius: 14px;
+    padding: 20px;
+    position: sticky; top: 20px;
+  }
+  .result-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px; color: var(--gold-light);
+    margin-bottom: 20px; letter-spacing: 0.08em;
+  }
+
+  .cost-breakdown { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .cost-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px;
+  }
+  .cost-row .label { color: var(--text-dim); }
+  .cost-row .val { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text); }
+  .cost-row.sub { padding-left: 12px; }
+  .cost-row.sub .label { color: var(--text-muted); font-size: 11px; }
+  .cost-row.sub .val { font-size: 11px; color: var(--text-dim); }
+  .cost-row.total {
+    border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px;
+  }
+  .cost-row.total .label { color: var(--text); font-weight: 500; }
+  .cost-row.total .val { color: var(--rose); font-size: 15px; }
+
+  .profit-box {
+    background: var(--bg); border-radius: 10px; padding: 16px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  .profit-item { text-align: center; }
+  .profit-item .p-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 4px; }
+  .profit-item .p-val {
+    font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500;
+  }
+  .profit-item .p-val.positive { color: var(--mint); }
+  .profit-item .p-val.negative { color: var(--rose); }
+  .profit-item .p-val.neutral { color: var(--gold-light); }
+
+  /* ── 利润率弧形仪表 ── */
+  .gauge-wrap { grid-column: 1 / -1; display: flex; justify-content: center; padding: 8px 0 0; }
+  .gauge-wrap svg text { font-family: 'DM Mono', monospace; }
+
+  /* ── 订单历史 ── */
+  .order-list { display: flex; flex-direction: column; gap: 10px; }
+  .order-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 12px; align-items: start;
+    cursor: pointer; transition: border-color 0.2s;
+  }
+  .order-card:hover { border-color: var(--border-light); }
+  .order-meta { display: flex; flex-direction: column; gap: 6px; }
+  .order-name { font-size: 14px; color: var(--text); font-weight: 500; }
+  .order-tags { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .order-tag {
+    font-size: 10px; padding: 2px 7px; border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+  .tag-nail { background: var(--tag-nail); color: var(--gold); border: 1px solid #c9a84c30; }
+  .tag-lash { background: var(--tag-lash); color: var(--rose); border: 1px solid #d4756a30; }
+  .order-date { font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+  .order-profit { text-align: right; }
+  .order-profit .revenue { font-size: 12px; color: var(--text-dim); margin-bottom: 2px; }
+  .order-profit .margin {
+    font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500;
+  }
+  .order-profit .margin.good { color: var(--mint); }
+  .order-profit .margin.warn { color: var(--gold); }
+  .order-profit .margin.bad  { color: var(--rose); }
+
+  /* ── 耗材库 ── */
+  .stock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stock-item {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .stock-name { font-size: 13px; color: var(--text); }
+  .stock-detail { font-size: 11px; color: var(--text-dim); }
+  .stock-cost {
+    font-family: 'DM Mono', monospace; font-size: 15px;
+    color: var(--gold); margin-top: 4px;
+  }
+  .stock-cost span { font-size: 10px; color: var(--text-muted); }
+
+  /* ── 技师档案 ── */
+  .technician-list { display: flex; flex-direction: column; gap: 8px; }
+  .tech-item {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px;
+    display: grid; grid-template-columns: 1fr auto auto;
+    gap: 12px; align-items: center;
+  }
+  .tech-name { font-size: 13px; color: var(--text); }
+  .tech-rate {
+    font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-dim);
+    text-align: right;
+  }
+
+  /* ── 空状态 ── */
+  .empty-state {
+    text-align: center; padding: 40px 20px;
+    color: var(--text-muted); font-size: 13px;
+  }
+  .empty-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.4; }
+
+  /* ── layout ── */
+  .two-col { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+  @media (max-width: 700px) {
+    .two-col { grid-template-columns: 1fr; }
+    .form-row.col3, .form-row.col4 { grid-template-columns: 1fr 1fr; }
+    .stock-grid { grid-template-columns: 1fr; }
+    .material-item { grid-template-columns: 1fr 1fr 1fr 60px 28px; }
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  /* ── 数字输入美化 ── */
+  input[type=number] { -moz-appearance: textfield; }
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  /* ── 滚动条 ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .section-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+
+  .highlight-row { background: #c9a84c08; }
+
+  /* ── 提示 toast ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--surface2); border: 1px solid var(--gold-dim);
+    color: var(--gold-light); padding: 10px 20px;
+    border-radius: 8px; font-size: 13px;
+    transition: transform 0.3s ease; z-index: 999;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* 新增：平台成本模块 */
+  .platform-block {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; margin-bottom: 10px;
+  }
+  .platform-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── 顶部 ── -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">🦦</div>
+      <div>
+        <div class="brand-name">獭掌柜·美业版</div>
+        <div class="brand-sub">美甲 · 美睫 · 变动成本管理</div>
+      </div>
+    </div>
+    <div class="header-date" id="headerDate"></div>
+  </div>
+
+  <!-- ── 导航标签 ── -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('order')">📋 新建订单</button>
+    <button class="tab" onclick="switchTab('history')">📈 历史订单</button>
+    <button class="tab" onclick="switchTab('materials')">🧴 耗材库</button>
+    <button class="tab" onclick="switchTab('technicians')">💅 技师档案</button>
+  </div>
+
+  <!-- ══════════════ 新建订单 ══════════════ -->
+  <div id="tab-order">
+    <div class="two-col">
+      <div>
+
+        <!-- 基本信息 -->
+        <div class="card">
+          <div class="card-title">基本信息</div>
+          <div class="form-row col2">
+            <div>
+              <label>项目名称</label>
+              <input type="text" id="projectName" placeholder="如：日式美睫 D型 0.07" oninput="calc()">
+            </div>
+            <div>
+              <label>项目类别</label>
+              <select id="projectType" onchange="calc()">
+                <option value="lash">美睫</option>
+                <option value="nail">美甲</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row col3">
+            <div>
+              <label>技师</label>
+              <select id="techSelect" onchange="calc()">
+                <option value="">选择技师</option>
+              </select>
+            </div>
+            <div>
+              <label>服务时长（分钟）</label>
+              <input type="number" id="duration" placeholder="90" oninput="calc()">
+            </div>
+            <div>
+              <label>日期</label>
+              <input type="date" id="orderDate">
+            </div>
+          </div>
+        </div>
+
+        <!-- 渠道 & 收费 -->
+        <div class="card">
+          <div class="card-title">渠道 & 收费</div>
+          <div class="form-row col3">
+            <div>
+              <label>销售渠道</label>
+              <select id="channel" onchange="onChannelChange(); calc()">
+                <option value="offline">到店自然客</option>
+                <option value="meituan">美团团购</option>
+                <option value="douyin">抖音团购</option>
+              </select>
+            </div>
+            <div>
+              <label>券面价 / 售价 (¥)</label>
+              <div class="input-prefix">
+                <span>¥</span>
+                <input type="number" id="facePrice" placeholder="299" oninput="calc()">
+              </div>
+            </div>
+            <div id="discountWrap" style="display:none">
+              <label>实际到账 (¥)</label>
+              <div class="input-prefix">
+                <span>¥</span>
+                <input type="number" id="actualRevenue" placeholder="255" oninput="onActualChange(); calc()">
+              </div>
+            </div>
+          </div>
+
+          <!-- 平台佣金模块（线上才显示） -->
+          <div id="platformBlock" style="display:none">
+            <div class="platform-block">
+              <div class="platform-header">
+                <span id="platformBadge" class="platform-badge badge-meituan">美团团购</span>
+                <span style="font-size:11px;color:var(--text-muted)">每单可调整</span>
+              </div>
+              <div class="form-row col3">
+                <div>
+                  <label>佣金率 (%)</label>
+                  <div class="input-suffix">
+                    <input type="number" id="commissionRate" placeholder="12" oninput="onCommissionChange(); calc()">
+                    <span>%</span>
+                  </div>
+                </div>
+                <div>
+                  <label>技师提成基数</label>
+                  <select id="commBase" onchange="calc()">
+                    <option value="face">券面价</option>
+                    <option value="actual">实收到账</option>
+                  </select>
+                </div>
+                <div style="display:flex;align-items:flex-end;padding-bottom:1px">
+                  <div style="font-size:11px;color:var(--text-dim);line-height:1.6">
+                    平台抽佣 = 券面价 × 佣金率<br>
+                    <span style="color:var(--text-muted)">实收 = 券面价 − 佣金</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 耗材成本 -->
+        <div class="card">
+          <div class="card-title">耗材成本</div>
+
+          <!-- 从库存添加 -->
+          <div class="form-row col2" style="margin-bottom:14px">
+            <div>
+              <label>从耗材库添加</label>
+              <select id="stockPicker">
+                <option value="">选择耗材...</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:8px">
+              <div style="flex:1">
+                <label>用量（副/次/克...）</label>
+                <input type="number" id="stockQty" placeholder="1" min="0.01" step="0.01">
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="addFromStock()" style="margin-bottom:1px">+ 添加</button>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- 耗材明细 -->
+          <div class="material-header">
+            <span>耗材名称</span><span>单次成本(¥)</span><span>用量</span><span style="text-align:right">小计</span><span></span>
+          </div>
+          <div class="material-list" id="materialList"></div>
+
+          <!-- 手动添加行 -->
+          <button class="btn btn-ghost btn-sm" onclick="addManualMaterial()" style="width:100%;margin-top:4px">＋ 手动添加耗材</button>
+
+          <div class="divider"></div>
+          <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px">
+            <span style="font-size:12px;color:var(--text-dim)">耗材合计</span>
+            <span id="materialTotal" style="font-family:'DM Mono',monospace;font-size:16px;color:var(--gold)">¥0.00</span>
+          </div>
+        </div>
+
+        <!-- 备注 -->
+        <div class="card">
+          <div class="card-title">备注</div>
+          <input type="text" id="orderNote" placeholder="客户手型特殊 / 加了额外钻饰 / 过敏体质...">
+        </div>
+
+        <div class="section-actions">
+          <button class="btn btn-ghost" onclick="resetOrder()">清空</button>
+          <button class="btn btn-gold" onclick="saveOrder()">保存订单</button>
+        </div>
+      </div>
+
+      <!-- ── 右侧结果面板 ── -->
+      <div class="result-panel">
+        <div class="result-title">🦦 本单成本分析</div>
+
+        <div class="cost-breakdown" id="costBreakdown">
+          <div class="cost-row">
+            <span class="label">售价（券面价）</span>
+            <span class="val" id="r-face">¥—</span>
+          </div>
+          <div class="cost-row sub" id="r-commission-row">
+            <span class="label">↳ 平台佣金</span>
+            <span class="val" id="r-commission">—</span>
+          </div>
+          <div class="cost-row sub" id="r-actual-row">
+            <span class="label">↳ 实收到账</span>
+            <span class="val" id="r-actual">—</span>
+          </div>
+          <div class="divider" style="margin:6px 0"></div>
+          <div class="cost-row">
+            <span class="label">耗材成本</span>
+            <span class="val" id="r-material">¥0.00</span>
+          </div>
+          <div class="cost-row">
+            <span class="label">技师提成</span>
+            <span class="val" id="r-commission-cost">¥—</span>
+          </div>
+          <div class="cost-row sub" id="r-platform-fee-row">
+            <span class="label">平台佣金费</span>
+            <span class="val" id="r-platform-fee">—</span>
+          </div>
+          <div class="cost-row total">
+            <span class="label">变动成本合计</span>
+            <span class="val" id="r-total-cost">¥—</span>
+          </div>
+        </div>
+
+        <div class="profit-box">
+          <div class="profit-item">
+            <div class="p-label">毛利润</div>
+            <div class="p-val neutral" id="r-profit">—</div>
+          </div>
+          <div class="profit-item">
+            <div class="p-label">毛利率</div>
+            <div class="p-val neutral" id="r-margin">—</div>
+          </div>
+          <div class="gauge-wrap">
+            <svg width="180" height="100" viewBox="0 0 180 100">
+              <defs>
+                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#d4756a"/>
+                  <stop offset="50%" stop-color="#c9a84c"/>
+                  <stop offset="100%" stop-color="#6aaa8e"/>
+                </linearGradient>
+              </defs>
+              <!-- 背景弧 -->
+              <path d="M 20 90 A 70 70 0 0 1 160 90" fill="none" stroke="#2e2b24" stroke-width="10" stroke-linecap="round"/>
+              <!-- 彩色弧 -->
+              <path id="gaugeArc" d="M 20 90 A 70 70 0 0 1 160 90" fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round"
+                stroke-dasharray="0 220" style="transition:stroke-dasharray 0.5s ease"/>
+              <!-- 指针 -->
+              <line id="gaugeNeedle" x1="90" y1="90" x2="90" y2="30" stroke="#e8e2d6" stroke-width="2" stroke-linecap="round"
+                style="transform-origin:90px 90px; transform:rotate(0deg); transition:transform 0.5s ease"/>
+              <circle cx="90" cy="90" r="5" fill="var(--surface2)" stroke="#e8e2d6" stroke-width="1.5"/>
+              <text id="gaugeLabel" x="90" y="80" text-anchor="middle" font-size="13" fill="#8a8070">—%</text>
+              <text x="18" y="100" font-size="9" fill="#4a4540">0%</text>
+              <text x="148" y="100" font-size="9" fill="#4a4540">100%</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 历史订单 ══════════════ -->
+  <div id="tab-history" style="display:none">
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <select id="filterChannel" onchange="renderHistory()" style="width:auto;min-width:120px">
+          <option value="">全部渠道</option>
+          <option value="offline">到店自然客</option>
+          <option value="meituan">美团团购</option>
+          <option value="douyin">抖音团购</option>
+        </select>
+        <select id="filterType" onchange="renderHistory()" style="width:auto;min-width:100px">
+          <option value="">全部类别</option>
+          <option value="lash">美睫</option>
+          <option value="nail">美甲</option>
+        </select>
+        <div style="margin-left:auto;font-size:12px;color:var(--text-dim)">
+          共 <span id="historyCount">0</span> 单 ·
+          平均毛利率 <span id="historyAvgMargin" style="color:var(--mint);font-family:'DM Mono',monospace">—</span>
+        </div>
+      </div>
+    </div>
+    <div class="order-list" id="orderList">
+      <div class="empty-state"><div class="empty-icon">📋</div>暂无订单记录</div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 耗材库 ══════════════ -->
+  <div id="tab-materials" style="display:none">
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">添加耗材</div>
+      <div class="form-row col4">
+        <div>
+          <label>耗材名称</label>
+          <input type="text" id="matName" placeholder="睫毛胶水 A+">
+        </div>
+        <div>
+          <label>单瓶/盒总价 (¥)</label>
+          <div class="input-prefix"><span>¥</span>
+            <input type="number" id="matPrice" placeholder="80">
+          </div>
+        </div>
+        <div>
+          <label>可用次数（副/套...）</label>
+          <input type="number" id="matUsage" placeholder="40">
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-gold" style="width:100%" onclick="addMaterial()">添加</button>
+        </div>
+      </div>
+    </div>
+    <div class="stock-grid" id="stockGrid">
+      <div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🧴</div>耗材库为空，先添加耗材</div>
+    </div>
+  </div>
+
+  <!-- ══════════════ 技师档案 ══════════════ -->
+  <div id="tab-technicians" style="display:none">
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">添加技师</div>
+      <div class="form-row col4">
+        <div>
+          <label>技师姓名</label>
+          <input type="text" id="techName" placeholder="小王">
+        </div>
+        <div>
+          <label>美睫提成 (%)</label>
+          <div class="input-suffix">
+            <input type="number" id="techLashRate" placeholder="30">
+            <span>%</span>
+          </div>
+        </div>
+        <div>
+          <label>美甲提成 (%)</label>
+          <div class="input-suffix">
+            <input type="number" id="techNailRate" placeholder="25">
+            <span>%</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-gold" style="width:100%" onclick="addTechnician()">添加</button>
+        </div>
+      </div>
+    </div>
+    <div class="technician-list" id="techList">
+      <div class="empty-state"><div class="empty-icon">💅</div>暂无技师，先添加技师档案</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+let materials   = JSON.parse(localStorage.getItem('ot_materials')   || '[]');
+let technicians = JSON.parse(localStorage.getItem('ot_technicians') || '[]');
+let orders      = JSON.parse(localStorage.getItem('ot_orders')      || '[]');
+let orderMaterials = []; // 当前订单耗材行
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  document.getElementById('orderDate').value = new Date().toISOString().slice(0,10);
+  renderStockPicker();
+  renderTechSelect();
+  renderMaterials();
+  renderTechnicians();
+  renderHistory();
+  calc();
+});
+
+// ═══════════════════════════════════════════
+//  TAB
+// ═══════════════════════════════════════════
+function switchTab(t) {
+  ['order','history','materials','technicians'].forEach(id => {
+    document.getElementById('tab-'+id).style.display = id===t ? '' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    el.classList.toggle('active', ['order','history','materials','technicians'][i]===t);
+  });
+  if(t==='history') renderHistory();
+}
+
+// ═══════════════════════════════════════════
+//  渠道切换
+// ═══════════════════════════════════════════
+function onChannelChange() {
+  const ch = document.getElementById('channel').value;
+  const isOnline = ch !== 'offline';
+  document.getElementById('discountWrap').style.display = isOnline ? '' : 'none';
+  document.getElementById('platformBlock').style.display = isOnline ? '' : 'none';
+  if(isOnline){
+    const badge = document.getElementById('platformBadge');
+    if(ch==='meituan'){
+      badge.className='platform-badge badge-meituan'; badge.textContent='美团团购';
+      document.getElementById('commissionRate').value='12';
+    } else {
+      badge.className='platform-badge badge-douyin'; badge.textContent='抖音团购';
+      document.getElementById('commissionRate').value='5';
+    }
+    onCommissionChange();
+  }
+}
+
+function onCommissionChange() {
+  const face = parseFloat(document.getElementById('facePrice').value)||0;
+  const rate = parseFloat(document.getElementById('commissionRate').value)||0;
+  if(face>0) document.getElementById('actualRevenue').value = (face*(1-rate/100)).toFixed(2);
+}
+
+function onActualChange() {
+  const face = parseFloat(document.getElementById('facePrice').value)||0;
+  const actual = parseFloat(document.getElementById('actualRevenue').value)||0;
+  if(face>0 && actual>0) document.getElementById('commissionRate').value = ((1-actual/face)*100).toFixed(1);
+}
+
+// ═══════════════════════════════════════════
+//  耗材行
+// ═══════════════════════════════════════════
+function addFromStock() {
+  const picker = document.getElementById('stockPicker');
+  const idx = parseInt(picker.value);
+  const qty = parseFloat(document.getElementById('stockQty').value)||1;
+  if(isNaN(idx)) return;
+  const mat = materials[idx];
+  const unitCost = mat.price / mat.usage;
+  orderMaterials.push({ name: mat.name, unitCost, qty, fromStock: idx });
+  picker.value=''; document.getElementById('stockQty').value='';
+  renderOrderMaterials(); calc();
+}
+
+function addManualMaterial() {
+  orderMaterials.push({ name:'', unitCost:0, qty:1, fromStock:null });
+  renderOrderMaterials(); calc();
+}
+
+function renderOrderMaterials() {
+  const list = document.getElementById('materialList');
+  if(orderMaterials.length===0){ list.innerHTML=''; calcMaterialTotal(); return; }
+  list.innerHTML = orderMaterials.map((m,i) => `
+    <div class="material-item">
+      <input type="text" placeholder="耗材名称" value="${m.name}"
+        oninput="orderMaterials[${i}].name=this.value" style="font-size:12px">
+      <div class="input-prefix" style="font-size:12px">
+        <span>¥</span>
+        <input type="number" placeholder="0.00" value="${m.unitCost||''}"
+          oninput="orderMaterials[${i}].unitCost=parseFloat(this.value)||0;updateMatRow(${i})" style="padding-left:20px;font-size:12px">
+      </div>
+      <div class="input-suffix" style="font-size:12px">
+        <input type="number" placeholder="1" value="${m.qty}"
+          oninput="orderMaterials[${i}].qty=parseFloat(this.value)||0;updateMatRow(${i})" style="padding-right:28px;font-size:12px">
+        <span style="font-size:10px">次</span>
+      </div>
+      <div class="cost-preview" id="matRow${i}">¥${(m.unitCost*m.qty).toFixed(2)}</div>
+      <button class="del-btn" onclick="removeOrderMat(${i})">×</button>
+    </div>`).join('');
+}
+
+function updateMatRow(i) {
+  const m = orderMaterials[i];
+  const el = document.getElementById('matRow'+i);
+  if(el) el.textContent = '¥'+(m.unitCost*m.qty).toFixed(2);
+  calc();
+}
+
+function removeOrderMat(i) {
+  orderMaterials.splice(i,1);
+  renderOrderMaterials(); calc();
+}
+
+function calcMaterialTotal() {
+  return orderMaterials.reduce((s,m)=>s+m.unitCost*m.qty,0);
+}
+
+// ═══════════════════════════════════════════
+//  CALC
+// ═══════════════════════════════════════════
+function calc() {
+  const face   = parseFloat(document.getElementById('facePrice').value)||0;
+  const ch     = document.getElementById('channel').value;
+  const isOnline = ch!=='offline';
+  const commRate = parseFloat(document.getElementById('commissionRate').value)||0;
+  const actual = isOnline ? face*(1-commRate/100) : face;
+  const commBase = document.getElementById('commBase')?.value || 'face';
+
+  const matTotal = calcMaterialTotal();
+
+  // 技师提成
+  const techSel = document.getElementById('techSelect').value;
+  const projType = document.getElementById('projectType').value;
+  let techRate = 0;
+  if(techSel!=='') {
+    const tech = technicians[parseInt(techSel)];
+    techRate = projType==='lash' ? tech.lashRate : tech.nailRate;
+  }
+  const techBase = isOnline ? (commBase==='face'? face : actual) : face;
+  const techCost = techBase * techRate / 100;
+
+  // 平台佣金费用
+  const platformFee = isOnline ? face * commRate / 100 : 0;
+
+  // 总变动成本
+  const totalCost = matTotal + techCost + platformFee;
+
+  // 毛利（基于券面价）
+  const profit = face - totalCost;
+  const margin = face>0 ? profit/face*100 : 0;
+
+  // 更新 UI
+  document.getElementById('r-material').textContent = '¥'+matTotal.toFixed(2);
+  document.getElementById('materialTotal').textContent = '¥'+matTotal.toFixed(2);
+
+  if(face>0){
+    document.getElementById('r-face').textContent = '¥'+face.toFixed(2);
+  } else {
+    document.getElementById('r-face').textContent = '¥—';
+  }
+
+  const commRow = document.getElementById('r-commission-row');
+  const actualRow = document.getElementById('r-actual-row');
+  const platFeeRow = document.getElementById('r-platform-fee-row');
+
+  if(isOnline && face>0){
+    commRow.style.display=''; actualRow.style.display=''; platFeeRow.style.display='';
+    document.getElementById('r-commission').textContent = '-¥'+platformFee.toFixed(2)+' ('+commRate+'%)';
+    document.getElementById('r-actual').textContent = '¥'+actual.toFixed(2);
+    document.getElementById('r-platform-fee').textContent = '¥'+platformFee.toFixed(2);
+  } else {
+    commRow.style.display='none'; actualRow.style.display='none'; platFeeRow.style.display='none';
+  }
+
+  if(techCost>0){
+    document.getElementById('r-commission-cost').textContent = '¥'+techCost.toFixed(2)+' ('+techRate+'%)';
+  } else {
+    document.getElementById('r-commission-cost').textContent = '¥—';
+  }
+
+  if(face>0){
+    document.getElementById('r-total-cost').textContent = '¥'+totalCost.toFixed(2);
+    const profitEl = document.getElementById('r-profit');
+    const marginEl = document.getElementById('r-margin');
+    profitEl.textContent = (profit>=0?'¥':'−¥')+Math.abs(profit).toFixed(2);
+    marginEl.textContent = margin.toFixed(1)+'%';
+    profitEl.className = 'p-val '+(margin>=50?'positive':margin>=30?'neutral':'negative');
+    marginEl.className = 'p-val '+(margin>=50?'positive':margin>=30?'neutral':'negative');
+    updateGauge(margin);
+  } else {
+    document.getElementById('r-total-cost').textContent = '¥—';
+    updateGauge(0);
+  }
+}
+
+// ═══════════════════════════════════════════
+//  仪表盘
+// ═══════════════════════════════════════════
+function updateGauge(pct) {
+  pct = Math.max(0, Math.min(100, pct));
+  const arcLen = 220;
+  const filled = arcLen * pct / 100;
+  document.getElementById('gaugeArc').setAttribute('stroke-dasharray', filled+' '+(arcLen-filled));
+  const deg = -90 + pct * 1.8;
+  document.getElementById('gaugeNeedle').style.transform = `rotate(${deg}deg)`;
+  document.getElementById('gaugeLabel').textContent = pct.toFixed(1)+'%';
+}
+
+// ═══════════════════════════════════════════
+//  保存订单
+// ═══════════════════════════════════════════
+function saveOrder() {
+  const name = document.getElementById('projectName').value.trim();
+  const face = parseFloat(document.getElementById('facePrice').value)||0;
+  if(!name){ showToast('请填写项目名称'); return; }
+  if(!face){ showToast('请填写售价'); return; }
+
+  const ch = document.getElementById('channel').value;
+  const isOnline = ch!=='offline';
+  const commRate = parseFloat(document.getElementById('commissionRate').value)||0;
+  const actual = isOnline ? face*(1-commRate/100) : face;
+  const commBase = document.getElementById('commBase')?.value||'face';
+  const projType = document.getElementById('projectType').value;
+  const techSel = document.getElementById('techSelect').value;
+  let techRate=0, techName='';
+  if(techSel!==''){
+    const t=technicians[parseInt(techSel)];
+    techRate=projType==='lash'?t.lashRate:t.nailRate;
+    techName=t.name;
+  }
+  const techBase = isOnline?(commBase==='face'?face:actual):face;
+  const techCost = techBase*techRate/100;
+  const platformFee = isOnline?face*commRate/100:0;
+  const matTotal = calcMaterialTotal();
+  const totalCost = matTotal+techCost+platformFee;
+  const profit = face-totalCost;
+  const margin = face>0?profit/face*100:0;
+
+  orders.unshift({
+    id: Date.now(),
+    name, type: projType, channel: ch,
+    facePrice: face, actualRevenue: actual,
+    commissionRate: commRate,
+    techName, techRate, techCost,
+    platformFee, matTotal, totalCost,
+    profit, margin,
+    duration: document.getElementById('duration').value,
+    date: document.getElementById('orderDate').value,
+    note: document.getElementById('orderNote').value,
+    materials: JSON.parse(JSON.stringify(orderMaterials))
+  });
+  localStorage.setItem('ot_orders', JSON.stringify(orders));
+  showToast('订单已保存 ✓');
+  renderHistory();
+}
+
+function resetOrder() {
+  document.getElementById('projectName').value='';
+  document.getElementById('facePrice').value='';
+  document.getElementById('actualRevenue').value='';
+  document.getElementById('commissionRate').value='';
+  document.getElementById('orderNote').value='';
+  orderMaterials=[];
+  renderOrderMaterials();
+  calc();
+}
+
+// ═══════════════════════════════════════════
+//  历史订单
+// ═══════════════════════════════════════════
+function renderHistory() {
+  const chFilter = document.getElementById('filterChannel').value;
+  const tyFilter = document.getElementById('filterType').value;
+  let filtered = orders.filter(o=>{
+    if(chFilter && o.channel!==chFilter) return false;
+    if(tyFilter && o.type!==tyFilter) return false;
+    return true;
+  });
+  document.getElementById('historyCount').textContent = filtered.length;
+  const avgM = filtered.length ? filtered.reduce((s,o)=>s+o.margin,0)/filtered.length : 0;
+  document.getElementById('historyAvgMargin').textContent = filtered.length ? avgM.toFixed(1)+'%' : '—';
+
+  const el = document.getElementById('orderList');
+  if(!filtered.length){
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div>暂无符合条件的订单</div>';
+    return;
+  }
+
+  const chMap = {offline:'到店',meituan:'美团',douyin:'抖音'};
+  const chBadge = {offline:'badge-offline',meituan:'badge-meituan',douyin:'badge-douyin'};
+  el.innerHTML = filtered.map(o => `
+    <div class="order-card">
+      <div class="order-meta">
+        <div class="order-name">${o.name}</div>
+        <div class="order-tags">
+          <span class="order-tag ${o.type==='lash'?'tag-lash':'tag-nail'}">${o.type==='lash'?'美睫':'美甲'}</span>
+          <span class="platform-badge ${chBadge[o.channel]}" style="font-size:10px;padding:2px 6px">${chMap[o.channel]}</span>
+          ${o.techName?`<span style="font-size:11px;color:var(--text-dim)">${o.techName}</span>`:''}
+        </div>
+        <div class="order-date">${o.date} ${o.duration?'· '+o.duration+'min':''} ${o.note?'· '+o.note:''}</div>
+      </div>
+      <div class="order-profit">
+        <div class="revenue">售¥${o.facePrice.toFixed(0)} 成本¥${o.totalCost.toFixed(0)}</div>
+        <div class="margin ${o.margin>=50?'good':o.margin>=30?'warn':'bad'}">${o.margin.toFixed(1)}%</div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  耗材库
+// ═══════════════════════════════════════════
+function addMaterial() {
+  const name  = document.getElementById('matName').value.trim();
+  const price = parseFloat(document.getElementById('matPrice').value)||0;
+  const usage = parseFloat(document.getElementById('matUsage').value)||0;
+  if(!name||!price||!usage){ showToast('请填写完整耗材信息'); return; }
+  materials.push({name,price,usage});
+  localStorage.setItem('ot_materials', JSON.stringify(materials));
+  document.getElementById('matName').value='';
+  document.getElementById('matPrice').value='';
+  document.getElementById('matUsage').value='';
+  renderMaterials(); renderStockPicker();
+  showToast('耗材已添加 ✓');
+}
+
+function renderMaterials() {
+  const grid = document.getElementById('stockGrid');
+  if(!materials.length){
+    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🧴</div>耗材库为空，先添加耗材</div>';
+    return;
+  }
+  grid.innerHTML = materials.map((m,i)=>`
+    <div class="stock-item">
+      <div style="display:flex;justify-content:space-between;align-items:start">
+        <div class="stock-name">${m.name}</div>
+        <button class="del-btn" onclick="deleteMaterial(${i})">×</button>
+      </div>
+      <div class="stock-detail">¥${m.price} / ${m.usage}次</div>
+      <div class="stock-cost">¥${(m.price/m.usage).toFixed(2)}<span> /次</span></div>
+    </div>`).join('');
+}
+
+function deleteMaterial(i) {
+  materials.splice(i,1);
+  localStorage.setItem('ot_materials', JSON.stringify(materials));
+  renderMaterials(); renderStockPicker();
+}
+
+function renderStockPicker() {
+  const p = document.getElementById('stockPicker');
+  p.innerHTML = '<option value="">选择耗材...</option>' +
+    materials.map((m,i)=>`<option value="${i}">${m.name} (¥${(m.price/m.usage).toFixed(2)}/次)</option>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  技师
+// ═══════════════════════════════════════════
+function addTechnician() {
+  const name = document.getElementById('techName').value.trim();
+  const lr   = parseFloat(document.getElementById('techLashRate').value)||0;
+  const nr   = parseFloat(document.getElementById('techNailRate').value)||0;
+  if(!name){ showToast('请填写技师姓名'); return; }
+  technicians.push({name, lashRate:lr, nailRate:nr});
+  localStorage.setItem('ot_technicians', JSON.stringify(technicians));
+  document.getElementById('techName').value='';
+  document.getElementById('techLashRate').value='';
+  document.getElementById('techNailRate').value='';
+  renderTechnicians(); renderTechSelect();
+  showToast('技师已添加 ✓');
+}
+
+function renderTechnicians() {
+  const el = document.getElementById('techList');
+  if(!technicians.length){
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">💅</div>暂无技师，先添加技师档案</div>';
+    return;
+  }
+  el.innerHTML = technicians.map((t,i)=>`
+    <div class="tech-item">
+      <div class="tech-name">${t.name}</div>
+      <div class="tech-rate">美睫 ${t.lashRate}% &nbsp;·&nbsp; 美甲 ${t.nailRate}%</div>
+      <button class="del-btn" onclick="deleteTech(${i})">×</button>
+    </div>`).join('');
+}
+
+function deleteTech(i) {
+  technicians.splice(i,1);
+  localStorage.setItem('ot_technicians', JSON.stringify(technicians));
+  renderTechnicians(); renderTechSelect();
+}
+
+function renderTechSelect() {
+  const s = document.getElementById('techSelect');
+  s.innerHTML = '<option value="">选择技师</option>' +
+    technicians.map((t,i)=>`<option value="${i}">${t.name}</option>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+</script>
+</body>
+</html>
