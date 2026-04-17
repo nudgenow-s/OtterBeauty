@@ -2,1131 +2,1077 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>獭掌柜·美业版</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0f0e0c;
-    --surface: #1a1814;
-    --surface2: #232018;
-    --border: #2e2b24;
-    --border-light: #3d3930;
-    --gold: #c9a84c;
-    --gold-light: #e2c97e;
-    --gold-dim: #8a6e2f;
-    --rose: #d4756a;
-    --rose-dim: #8a4a42;
-    --mint: #6aaa8e;
-    --mint-dim: #3d6b58;
-    --text: #e8e2d6;
-    --text-dim: #8a8070;
-    --text-muted: #4a4540;
-    --tag-nail: #c9a84c22;
-    --tag-lash: #d4756a22;
-  }
+/* ── RESET & BASE ── */
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --pink:     #FF6B9D;
+  --pink-dk:  #C44D75;
+  --yellow:   #FFD000;
+  --yellow-dk:#BF9B00;
+  --green:    #4CAF50;
+  --green-dk: #388E3C;
+  --red:      #F44336;
+  --gold:     #F5A623;
+  --purple:   #9B6DFF;
+  --gray-bg:  #FDF5F7;
+  --gray-card:#F9F0F3;
+  --border:   #F0E0E6;
+  --text:     #2A1A20;
+  --text-2:   #7A5060;
+  --text-3:   #B89AA4;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans SC', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+body {
+  font-family:'PingFang SC','Helvetica Neue',sans-serif;
+  background:var(--gray-bg);
+  min-height:100vh; max-width:480px; margin:0 auto;
+  display:flex; flex-direction:column; overflow-x:hidden;
+}
 
-  /* ── 噪点纹理背景 ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-  }
+/* ── TOPBAR ── */
+.topbar {
+  background:#fff; border-bottom:2px solid var(--border);
+  padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100;
+}
+.topbar-logo { font-size:17px; font-weight:900; color:var(--pink); letter-spacing:-.3px; }
+.topbar-stats { display:flex; gap:14px; }
+.stat-chip { display:flex; align-items:center; gap:5px; font-size:14px; font-weight:800; color:#333; }
 
-  .app { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 24px 20px 80px; }
+/* ── MONTH HEADER ── */
+.month-header {
+  background:var(--pink); margin:14px 16px 0; border-radius:20px;
+  padding:16px 20px; display:flex; justify-content:space-between; align-items:center;
+  box-shadow:0 5px 0 var(--pink-dk);
+}
+.mh-left .mh-title { color:#fff; font-size:20px; font-weight:900; }
+.mh-left .mh-sub   { color:rgba(255,255,255,.72); font-size:12px; font-weight:700; margin-top:3px; }
+.mh-right .mh-rev  { color:#fff; font-size:26px; font-weight:900; text-align:right; }
+.mh-right .mh-rlbl { color:rgba(255,255,255,.65); font-size:11px; font-weight:700; text-align:right; }
 
-  /* ── 顶部标题 ── */
-  .header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 32px;
-  }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-icon {
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-  }
-  .brand-name {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--gold-light);
-    letter-spacing: 0.05em;
-  }
-  .brand-sub { font-size: 11px; color: var(--text-dim); letter-spacing: 0.12em; margin-top: 2px; }
-  .header-date { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); }
+/* ── MAIN VIEW ── */
+.main-view { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.calendar-view { padding:24px 0 130px; }
+.page-view { padding:16px 16px 130px; display:none; }
+.page-view.visible { display:block; }
 
-  /* ── 标签页 ── */
-  .tabs {
-    display: flex; gap: 2px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 4px;
-    margin-bottom: 28px;
-  }
-  .tab {
-    flex: 1; padding: 9px 12px;
-    border: none; background: transparent;
-    color: var(--text-dim); font-size: 13px;
-    font-family: 'Noto Sans SC', sans-serif;
-    border-radius: 7px; cursor: pointer;
-    transition: all 0.2s;
-  }
-  .tab.active { background: var(--surface2); color: var(--gold-light); border: 1px solid var(--border-light); }
-  .tab:hover:not(.active) { color: var(--text); }
+/* ── SNAKE ── */
+.snake-track { position:relative; width:100%; }
+.snake-svg   { position:absolute; top:0; left:0; width:100%; pointer-events:none; z-index:0; }
 
-  /* ── 卡片 ── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  .card-title {
-    font-size: 11px; letter-spacing: 0.15em;
-    color: var(--text-dim); text-transform: uppercase;
-    margin-bottom: 16px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .card-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.day-node {
+  position:absolute; width:74px; height:74px; border-radius:50%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer; z-index:2; transform:translate(-50%,-50%);
+  transition:transform .12s ease; opacity:0; animation:popIn .38s ease forwards;
+}
+.day-node:active { transform:translate(-50%,calc(-50% + 4px)) scale(.9); }
 
-  /* ── 表单元素 ── */
-  .form-row { display: grid; gap: 12px; margin-bottom: 12px; }
-  .form-row.col2 { grid-template-columns: 1fr 1fr; }
-  .form-row.col3 { grid-template-columns: 1fr 1fr 1fr; }
-  .form-row.col4 { grid-template-columns: 2fr 1fr 1fr 1fr; }
+@keyframes popIn {
+  0%   { opacity:0; transform:translate(-50%,-50%) scale(.35); }
+  70%  { transform:translate(-50%,-50%) scale(1.1); }
+  100% { opacity:1; transform:translate(-50%,-50%) scale(1); }
+}
 
-  label { font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 5px; letter-spacing: 0.05em; }
+.n-future { background:#EEE; box-shadow:0 5px 0 #C8C8C8; border:3px solid #C8C8C8; }
+.n-future .nd-num { color:#AAA; } .n-future .nd-ico { color:#BBB; }
+.n-done   { background:var(--pink); box-shadow:0 5px 0 var(--pink-dk); border:3px solid var(--pink-dk); }
+.n-done   .nd-num { color:#fff; }   .n-done .nd-ico { color:#fff; }
+.n-missed { background:#fff; box-shadow:0 5px 0 #C8C8C8; border:3px solid #DDD; }
+.n-missed .nd-num { color:#C0C0C0; } .n-missed .nd-ico { color:#CCC; }
+.n-today  {
+  background:var(--yellow); box-shadow:0 5px 0 var(--yellow-dk); border:3px solid var(--yellow-dk);
+  animation:popIn .38s ease forwards, todayPulse 2.2s .5s ease-in-out infinite;
+}
+.n-today .nd-num { color:#333; } .n-today .nd-ico { color:#555; }
+@keyframes todayPulse {
+  0%,100% { box-shadow:0 5px 0 var(--yellow-dk),0 0 0 0 rgba(255,208,0,.5); }
+  50%     { box-shadow:0 5px 0 var(--yellow-dk),0 0 0 14px rgba(255,208,0,0); }
+}
 
-  input, select {
-    width: 100%; padding: 9px 12px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-size: 13px;
-    font-family: 'Noto Sans SC', sans-serif;
-    outline: none;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-  }
-  input:focus, select:focus { border-color: var(--gold-dim); }
-  input::placeholder { color: var(--text-muted); }
-  select option { background: var(--surface2); }
+.nd-num { font-size:23px; font-weight:900; line-height:1; }
+.nd-ico { font-size:13px; margin-top:3px; font-weight:700; }
 
-  .input-prefix {
-    position: relative;
-  }
-  .input-prefix span {
-    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-    color: var(--text-dim); font-size: 12px; font-family: 'DM Mono', monospace;
-    pointer-events: none;
-  }
-  .input-prefix input { padding-left: 24px; }
+.today-tag {
+  position:absolute; top:-26px; left:50%; transform:translateX(-50%);
+  background:var(--yellow); color:#333; font-size:10px; font-weight:900;
+  padding:3px 9px; border-radius:8px; white-space:nowrap; box-shadow:0 2px 0 var(--yellow-dk); z-index:3;
+}
+.today-tag::after {
+  content:''; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%);
+  border:4px solid transparent; border-top-color:var(--yellow);
+}
 
-  .input-suffix { position: relative; }
-  .input-suffix span {
-    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-    color: var(--text-muted); font-size: 11px; pointer-events: none;
-  }
-  .input-suffix input { padding-right: 36px; }
+.chest-node {
+  position:absolute; width:82px; height:82px; background:#fff;
+  border-radius:20px; border:3px solid #DDD; box-shadow:0 5px 0 #C4C4C4;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer; z-index:2; transform:translate(-50%,-50%); transition:transform .12s;
+}
+.chest-node:active { transform:translate(-50%,calc(-50% + 4px)) scale(.9); }
+.ch-icon  { font-size:34px; }
+.ch-label { font-size:10px; font-weight:800; color:#999; margin-top:4px; }
 
-  /* ── 按钮 ── */
-  .btn {
-    padding: 9px 18px; border-radius: 8px; border: none;
-    font-size: 12px; font-family: 'Noto Sans SC', sans-serif;
-    cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em;
-  }
-  .btn-gold {
-    background: linear-gradient(135deg, var(--gold-dim), var(--gold));
-    color: #0f0e0c; font-weight: 500;
-  }
-  .btn-gold:hover { filter: brightness(1.1); }
-  .btn-ghost {
-    background: transparent; border: 1px solid var(--border);
-    color: var(--text-dim);
-  }
-  .btn-ghost:hover { border-color: var(--border-light); color: var(--text); }
-  .btn-rose {
-    background: transparent; border: 1px solid var(--rose-dim);
-    color: var(--rose); font-size: 11px; padding: 5px 10px;
-  }
-  .btn-danger { background: transparent; border: 1px solid var(--rose-dim); color: var(--rose); }
-  .btn-sm { padding: 5px 12px; font-size: 11px; }
+.mascot-node {
+  position:absolute; font-size:60px; transform:translate(-50%,-50%); z-index:1;
+  animation:mFloat 3s ease-in-out infinite;
+  filter:drop-shadow(0 6px 10px rgba(255,107,157,.25)); pointer-events:none;
+}
+@keyframes mFloat {
+  0%,100% { transform:translate(-50%,-50%) translateY(0); }
+  50%     { transform:translate(-50%,-50%) translateY(-10px); }
+}
 
-  /* ── 耗材列表 ── */
-  .material-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-  .material-item {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 80px 32px;
-    gap: 8px; align-items: center;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 12px;
-  }
-  .material-item .cost-preview {
-    font-family: 'DM Mono', monospace; font-size: 12px;
-    color: var(--gold); text-align: right;
-  }
-  .del-btn {
-    width: 28px; height: 28px; border-radius: 6px;
-    background: transparent; border: 1px solid var(--border);
-    color: var(--text-muted); cursor: pointer; font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-  }
-  .del-btn:hover { border-color: var(--rose-dim); color: var(--rose); }
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:480px; background:#fff; border-top:2px solid var(--border);
+  display:flex; z-index:200; padding-bottom:env(safe-area-inset-bottom,6px);
+}
+.nav-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:9px 2px 7px; border:none; background:none; cursor:pointer; gap:3px;
+}
+.nav-ico { font-size:20px; transition:transform .15s; }
+.nav-lbl { font-size:9px; font-weight:800; color:#AAA; }
+.nav-btn.active .nav-lbl { color:var(--pink); }
+.nav-btn.active .nav-ico { transform:scale(1.18); }
+.nav-btn:active  .nav-ico { transform:scale(.88); }
 
-  .material-header {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 80px 32px;
-    gap: 8px; padding: 0 12px 6px;
-  }
-  .material-header span { font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; }
+/* ── SHEET ── */
+.overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.48); z-index:500; align-items:flex-end;
+}
+.overlay.open { display:flex; animation:fadeIn .2s ease; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+.sheet {
+  background:#fff; width:100%; border-radius:28px 28px 0 0;
+  padding:0 24px 44px; animation:sheetUp .3s ease; max-height:82vh; overflow-y:auto;
+}
+@keyframes sheetUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.sh-handle { width:44px; height:5px; background:#E0E0E0; border-radius:3px; margin:14px auto 20px; }
+.sh-date   { font-size:22px; font-weight:900; color:#222; }
+.sh-status { font-size:13px; font-weight:700; color:#999; margin:4px 0 18px; }
+.metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+.mc { background:#F5F5F5; border-radius:16px; padding:14px 12px; }
+.mc-lbl { font-size:11px; font-weight:700; color:#999; margin-bottom:5px; }
+.mc-val { font-size:20px; font-weight:900; color:#222; }
+.mc-val.g { color:var(--green); } .mc-val.p { color:var(--pink); } .mc-val.r { color:var(--red); }
+.btn-row { display:flex; gap:10px; margin-bottom:10px; }
+.btn-sh {
+  flex:1; padding:15px 8px; border:none; border-radius:18px;
+  font-size:15px; font-weight:900; font-family:inherit;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all .1s;
+}
+.btn-primary { background:var(--pink); color:#fff; box-shadow:0 5px 0 var(--pink-dk); }
+.btn-primary:active { transform:translateY(4px); box-shadow:0 1px 0 var(--pink-dk); }
+.btn-ghost { background:#F0F0F0; color:#555; box-shadow:0 4px 0 #CECECE; width:100%; }
+.btn-ghost:active { transform:translateY(3px); box-shadow:0 1px 0 #CECECE; }
 
-  /* ── 平台徽章 ── */
-  .platform-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 8px; border-radius: 4px; font-size: 11px;
-  }
-  .badge-meituan { background: #ff6b0020; color: #ff8c40; border: 1px solid #ff6b0030; }
-  .badge-douyin  { background: #00f2ea18; color: #69d8d4; border: 1px solid #00f2ea28; }
-  .badge-offline { background: #6aaa8e18; color: var(--mint); border: 1px solid #6aaa8e28; }
+/* ── 页面通用 ── */
+.page-title-bar { display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+.page-title-icon { font-size:24px; }
+.page-title-text { font-size:22px; font-weight:900; color:var(--text); flex:1; }
+.section-label { font-size:12px; font-weight:800; color:var(--text-3); text-transform:uppercase; letter-spacing:.06em; margin:18px 0 10px; }
+.form-subtitle { font-size:13px; color:var(--text-3); margin:-8px 0 16px; }
 
-  /* ── 结果面板 ── */
-  .result-panel {
-    background: linear-gradient(135deg, #1a1814, #1f1c16);
-    border: 1px solid var(--gold-dim);
-    border-radius: 14px;
-    padding: 20px;
-    position: sticky; top: 20px;
-  }
-  .result-title {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 14px; color: var(--gold-light);
-    margin-bottom: 20px; letter-spacing: 0.08em;
-  }
+/* ── 表单 ── */
+.form-card { background:#fff; border-radius:20px; padding:20px 16px; margin-bottom:16px; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+.form-group { margin-bottom:16px; }
+.form-group.half { flex:1; }
+.form-row { display:flex; gap:12px; }
+.form-lbl { display:block; font-size:12px; font-weight:800; color:var(--text-3); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; }
+.form-inp {
+  width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:12px;
+  font-size:15px; font-family:inherit; outline:none; color:var(--text); transition:border-color .2s;
+}
+.form-inp:focus { border-color:var(--pink); }
 
-  .cost-breakdown { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-  .cost-row {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px;
-  }
-  .cost-row .label { color: var(--text-dim); }
-  .cost-row .val { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text); }
-  .cost-row.sub { padding-left: 12px; }
-  .cost-row.sub .label { color: var(--text-muted); font-size: 11px; }
-  .cost-row.sub .val { font-size: 11px; color: var(--text-dim); }
-  .cost-row.total {
-    border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px;
-  }
-  .cost-row.total .label { color: var(--text); font-weight: 500; }
-  .cost-row.total .val { color: var(--rose); font-size: 15px; }
+.cat-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.cat-chip {
+  padding:7px 12px; border-radius:20px; border:2px solid var(--border);
+  background:#fff; font-size:12px; font-weight:800; color:var(--text-2);
+  cursor:pointer; transition:all .15s; font-family:inherit;
+}
+.cat-chip.active { background:var(--pink); border-color:var(--pink); color:#fff; }
 
-  .profit-box {
-    background: var(--bg); border-radius: 10px; padding: 16px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  }
-  .profit-item { text-align: center; }
-  .profit-item .p-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 4px; }
-  .profit-item .p-val {
-    font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500;
-  }
-  .profit-item .p-val.positive { color: var(--mint); }
-  .profit-item .p-val.negative { color: var(--rose); }
-  .profit-item .p-val.neutral { color: var(--gold-light); }
+.margin-preview {
+  background:var(--gray-card); border-radius:12px; padding:10px 14px;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+}
+.mp-label { font-size:11px; font-weight:800; color:var(--text-3); }
+.mp-unit  { font-size:14px; font-weight:900; color:var(--text); }
 
-  /* ── 利润率弧形仪表 ── */
-  .gauge-wrap { grid-column: 1 / -1; display: flex; justify-content: center; padding: 8px 0 0; }
-  .gauge-wrap svg text { font-family: 'DM Mono', monospace; }
+.form-submit {
+  width:100%; padding:16px; background:var(--pink); color:#fff;
+  border:none; border-radius:18px; font-size:16px; font-weight:900;
+  cursor:pointer; box-shadow:0 5px 0 var(--pink-dk); font-family:inherit;
+  display:flex; align-items:center; justify-content:center; gap:8px; transition:all .1s;
+}
+.form-submit:active { transform:translateY(4px); box-shadow:0 1px 0 var(--pink-dk); }
+.form-success { text-align:center; padding:14px; background:#E8F5E9; color:var(--green); border-radius:14px; font-weight:800; margin-top:12px; font-size:15px; }
 
-  /* ── 订单历史 ── */
-  .order-list { display: flex; flex-direction: column; gap: 10px; }
-  .order-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px; padding: 16px;
-    display: grid; grid-template-columns: 1fr auto;
-    gap: 12px; align-items: start;
-    cursor: pointer; transition: border-color 0.2s;
-  }
-  .order-card:hover { border-color: var(--border-light); }
-  .order-meta { display: flex; flex-direction: column; gap: 6px; }
-  .order-name { font-size: 14px; color: var(--text); font-weight: 500; }
-  .order-tags { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-  .order-tag {
-    font-size: 10px; padding: 2px 7px; border-radius: 3px;
-    letter-spacing: 0.05em;
-  }
-  .tag-nail { background: var(--tag-nail); color: var(--gold); border: 1px solid #c9a84c30; }
-  .tag-lash { background: var(--tag-lash); color: var(--rose); border: 1px solid #d4756a30; }
-  .order-date { font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
-  .order-profit { text-align: right; }
-  .order-profit .revenue { font-size: 12px; color: var(--text-dim); margin-bottom: 2px; }
-  .order-profit .margin {
-    font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500;
-  }
-  .order-profit .margin.good { color: var(--mint); }
-  .order-profit .margin.warn { color: var(--gold); }
-  .order-profit .margin.bad  { color: var(--rose); }
+@keyframes shake {
+  0%,100% { transform:translateX(0); }
+  20%,60%  { transform:translateX(-6px); }
+  40%,80%  { transform:translateX(6px); }
+}
+.shake { animation:shake .4s ease; border-color:var(--red) !important; }
 
-  /* ── 耗材库 ── */
-  .stock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .stock-item {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px;
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .stock-name { font-size: 13px; color: var(--text); }
-  .stock-detail { font-size: 11px; color: var(--text-dim); }
-  .stock-cost {
-    font-family: 'DM Mono', monospace; font-size: 15px;
-    color: var(--gold); margin-top: 4px;
-  }
-  .stock-cost span { font-size: 10px; color: var(--text-muted); }
+/* ── 耗材卡片 ── */
+.mat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.mat-card { background:#fff; border-radius:16px; padding:14px 12px; box-shadow:0 2px 8px rgba(0,0,0,.06); position:relative; }
+.mat-name { font-size:14px; font-weight:800; color:var(--text); margin-bottom:4px; }
+.mat-detail { font-size:11px; color:var(--text-3); margin-bottom:6px; }
+.mat-unit-cost { font-size:18px; font-weight:900; color:var(--pink); }
+.mat-unit-cost span { font-size:11px; color:var(--text-3); font-weight:600; }
+.mat-del { position:absolute; top:8px; right:8px; background:none; border:none; cursor:pointer; font-size:14px; color:var(--text-3); }
 
-  /* ── 技师档案 ── */
-  .technician-list { display: flex; flex-direction: column; gap: 8px; }
-  .tech-item {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px;
-    display: grid; grid-template-columns: 1fr auto auto;
-    gap: 12px; align-items: center;
-  }
-  .tech-name { font-size: 13px; color: var(--text); }
-  .tech-rate {
-    font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-dim);
-    text-align: right;
-  }
+/* ── 技师卡片 ── */
+.tech-list { display:flex; flex-direction:column; gap:10px; }
+.tech-card { background:#fff; border-radius:16px; padding:16px; display:flex; align-items:center; gap:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.tech-avatar { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,var(--pink),var(--purple)); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.tech-info { flex:1; }
+.tech-name  { font-size:16px; font-weight:900; color:var(--text); }
+.tech-rates { font-size:12px; color:var(--text-3); margin-top:3px; }
+.tech-del   { background:none; border:none; cursor:pointer; font-size:16px; color:var(--text-3); }
 
-  /* ── 空状态 ── */
-  .empty-state {
-    text-align: center; padding: 40px 20px;
-    color: var(--text-muted); font-size: 13px;
-  }
-  .empty-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.4; }
+/* ── 订单卡片 ── */
+.order-list { display:flex; flex-direction:column; gap:10px; }
+.order-card { background:#fff; border-radius:18px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,.06); border-left:4px solid var(--pink); }
+.oc-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; }
+.oc-name   { font-size:16px; font-weight:900; color:var(--text); }
+.oc-date   { font-size:11px; color:var(--text-3); margin-top:3px; }
+.oc-margin { font-size:22px; font-weight:900; }
+.oc-margin.good { color:var(--green); } .oc-margin.warn { color:var(--gold); } .oc-margin.bad { color:var(--red); }
+.oc-meta { display:flex; gap:8px; flex-wrap:wrap; }
+.oc-tag { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:800; }
+.tag-nail    { background:#FFF0F5; color:var(--pink);   border:1px solid #FFD0E0; }
+.tag-lash    { background:#F0F0FF; color:var(--purple); border:1px solid #D8D0FF; }
+.tag-offline { background:#F0FFF4; color:var(--green);  border:1px solid #C0E0C8; }
+.tag-meituan { background:#FFF5E6; color:var(--gold);   border:1px solid #FFD8A0; }
+.tag-douyin  { background:#F0F0F0; color:#444;           border:1px solid #DDD; }
+.oc-costs { display:flex; gap:12px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+.oc-cost-item { flex:1; text-align:center; }
+.oc-cost-lbl  { font-size:10px; color:var(--text-3); font-weight:700; margin-bottom:2px; }
+.oc-cost-val  { font-size:13px; font-weight:800; color:var(--text); }
 
-  /* ── layout ── */
-  .two-col { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
-  @media (max-width: 700px) {
-    .two-col { grid-template-columns: 1fr; }
-    .form-row.col3, .form-row.col4 { grid-template-columns: 1fr 1fr; }
-    .stock-grid { grid-template-columns: 1fr; }
-    .material-item { grid-template-columns: 1fr 1fr 1fr 60px 28px; }
-  }
+/* ── 排行 ── */
+.rank-subtitle { font-size:12px; color:var(--text-3); font-weight:700; margin:-8px 0 16px; }
+.rank-empty    { text-align:center; color:var(--text-3); padding:48px 20px; font-size:15px; }
+.rank-tab-row  { display:flex; gap:8px; margin-bottom:16px; }
+.rank-tab { flex:1; padding:10px; border-radius:14px; border:2px solid var(--border); background:#fff; font-size:13px; font-weight:800; color:var(--text-2); cursor:pointer; font-family:inherit; transition:all .15s; }
+.rank-tab.active { background:var(--pink); border-color:var(--pink); color:#fff; }
+.rank-card { background:#fff; border-radius:18px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:center; gap:12px; box-shadow:0 2px 10px rgba(0,0,0,.06); }
+.rank-top-1 { border:2px solid #FFD700; background:linear-gradient(135deg,#FFFDE7,#fff); }
+.rank-top-2 { border:2px solid #C0C0C0; background:linear-gradient(135deg,#FAFAFA,#fff); }
+.rank-top-3 { border:2px solid #CD7F32; background:linear-gradient(135deg,#FFF3E0,#fff); }
+.rc-medal   { font-size:28px; min-width:36px; text-align:center; }
+.rank-num   { display:inline-block; width:28px; height:28px; background:var(--gray-bg); border-radius:50%; font-size:13px; font-weight:900; color:var(--text-3); line-height:28px; text-align:center; }
+.rc-body    { flex:1; }
+.rc-name    { font-size:15px; font-weight:900; color:var(--text); margin-bottom:8px; }
+.rc-bar-wrap{ background:var(--gray-bg); border-radius:6px; height:8px; overflow:hidden; margin-bottom:6px; }
+.rc-bar     { height:100%; border-radius:6px; transition:width .6s cubic-bezier(.34,1.56,.64,1); }
+.rc-sub     { font-size:12px; color:var(--text-3); font-weight:700; }
+.rc-val     { font-size:16px; font-weight:900; color:var(--pink); min-width:60px; text-align:right; }
 
-  .divider { height: 1px; background: var(--border); margin: 16px 0; }
-
-  /* ── 数字输入美化 ── */
-  input[type=number] { -moz-appearance: textfield; }
-  input[type=number]::-webkit-outer-spin-button,
-  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-  /* ── 滚动条 ── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .section-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
-
-  .highlight-row { background: #c9a84c08; }
-
-  /* ── 提示 toast ── */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: var(--surface2); border: 1px solid var(--gold-dim);
-    color: var(--gold-light); padding: 10px 20px;
-    border-radius: 8px; font-size: 13px;
-    transition: transform 0.3s ease; z-index: 999;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* 新增：平台成本模块 */
-  .platform-block {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px; margin-bottom: 10px;
-  }
-  .platform-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
-  }
+.hidden { display:none !important; }
 </style>
 </head>
 <body>
-<div class="app">
 
-  <!-- ── 顶部 ── -->
-  <div class="header">
-    <div class="brand">
-      <div class="brand-icon">🦦</div>
-      <div>
-        <div class="brand-name">獭掌柜·美业版</div>
-        <div class="brand-sub">美甲 · 美睫 · 变动成本管理</div>
-      </div>
-    </div>
-    <div class="header-date" id="headerDate"></div>
+<div class="topbar">
+  <div class="topbar-logo">🦦 獭掌柜·美业版</div>
+  <div class="topbar-stats">
+    <div class="stat-chip">🔥 <span id="streak-val">0</span></div>
+    <div class="stat-chip">💅 <span id="days-val">0</span> 天</div>
   </div>
-
-  <!-- ── 导航标签 ── -->
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('order')">📋 新建订单</button>
-    <button class="tab" onclick="switchTab('history')">📈 历史订单</button>
-    <button class="tab" onclick="switchTab('materials')">🧴 耗材库</button>
-    <button class="tab" onclick="switchTab('technicians')">💅 技师档案</button>
-  </div>
-
-  <!-- ══════════════ 新建订单 ══════════════ -->
-  <div id="tab-order">
-    <div class="two-col">
-      <div>
-
-        <!-- 基本信息 -->
-        <div class="card">
-          <div class="card-title">基本信息</div>
-          <div class="form-row col2">
-            <div>
-              <label>项目名称</label>
-              <input type="text" id="projectName" placeholder="如：日式美睫 D型 0.07" oninput="calc()">
-            </div>
-            <div>
-              <label>项目类别</label>
-              <select id="projectType" onchange="calc()">
-                <option value="lash">美睫</option>
-                <option value="nail">美甲</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row col3">
-            <div>
-              <label>技师</label>
-              <select id="techSelect" onchange="calc()">
-                <option value="">选择技师</option>
-              </select>
-            </div>
-            <div>
-              <label>服务时长（分钟）</label>
-              <input type="number" id="duration" placeholder="90" oninput="calc()">
-            </div>
-            <div>
-              <label>日期</label>
-              <input type="date" id="orderDate">
-            </div>
-          </div>
-        </div>
-
-        <!-- 渠道 & 收费 -->
-        <div class="card">
-          <div class="card-title">渠道 & 收费</div>
-          <div class="form-row col3">
-            <div>
-              <label>销售渠道</label>
-              <select id="channel" onchange="onChannelChange(); calc()">
-                <option value="offline">到店自然客</option>
-                <option value="meituan">美团团购</option>
-                <option value="douyin">抖音团购</option>
-              </select>
-            </div>
-            <div>
-              <label>券面价 / 售价 (¥)</label>
-              <div class="input-prefix">
-                <span>¥</span>
-                <input type="number" id="facePrice" placeholder="299" oninput="calc()">
-              </div>
-            </div>
-            <div id="discountWrap" style="display:none">
-              <label>实际到账 (¥)</label>
-              <div class="input-prefix">
-                <span>¥</span>
-                <input type="number" id="actualRevenue" placeholder="255" oninput="onActualChange(); calc()">
-              </div>
-            </div>
-          </div>
-
-          <!-- 平台佣金模块（线上才显示） -->
-          <div id="platformBlock" style="display:none">
-            <div class="platform-block">
-              <div class="platform-header">
-                <span id="platformBadge" class="platform-badge badge-meituan">美团团购</span>
-                <span style="font-size:11px;color:var(--text-muted)">每单可调整</span>
-              </div>
-              <div class="form-row col3">
-                <div>
-                  <label>佣金率 (%)</label>
-                  <div class="input-suffix">
-                    <input type="number" id="commissionRate" placeholder="12" oninput="onCommissionChange(); calc()">
-                    <span>%</span>
-                  </div>
-                </div>
-                <div>
-                  <label>技师提成基数</label>
-                  <select id="commBase" onchange="calc()">
-                    <option value="face">券面价</option>
-                    <option value="actual">实收到账</option>
-                  </select>
-                </div>
-                <div style="display:flex;align-items:flex-end;padding-bottom:1px">
-                  <div style="font-size:11px;color:var(--text-dim);line-height:1.6">
-                    平台抽佣 = 券面价 × 佣金率<br>
-                    <span style="color:var(--text-muted)">实收 = 券面价 − 佣金</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 耗材成本 -->
-        <div class="card">
-          <div class="card-title">耗材成本</div>
-
-          <!-- 从库存添加 -->
-          <div class="form-row col2" style="margin-bottom:14px">
-            <div>
-              <label>从耗材库添加</label>
-              <select id="stockPicker">
-                <option value="">选择耗材...</option>
-              </select>
-            </div>
-            <div style="display:flex;align-items:flex-end;gap:8px">
-              <div style="flex:1">
-                <label>用量（副/次/克...）</label>
-                <input type="number" id="stockQty" placeholder="1" min="0.01" step="0.01">
-              </div>
-              <button class="btn btn-ghost btn-sm" onclick="addFromStock()" style="margin-bottom:1px">+ 添加</button>
-            </div>
-          </div>
-
-          <div class="divider"></div>
-
-          <!-- 耗材明细 -->
-          <div class="material-header">
-            <span>耗材名称</span><span>单次成本(¥)</span><span>用量</span><span style="text-align:right">小计</span><span></span>
-          </div>
-          <div class="material-list" id="materialList"></div>
-
-          <!-- 手动添加行 -->
-          <button class="btn btn-ghost btn-sm" onclick="addManualMaterial()" style="width:100%;margin-top:4px">＋ 手动添加耗材</button>
-
-          <div class="divider"></div>
-          <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px">
-            <span style="font-size:12px;color:var(--text-dim)">耗材合计</span>
-            <span id="materialTotal" style="font-family:'DM Mono',monospace;font-size:16px;color:var(--gold)">¥0.00</span>
-          </div>
-        </div>
-
-        <!-- 备注 -->
-        <div class="card">
-          <div class="card-title">备注</div>
-          <input type="text" id="orderNote" placeholder="客户手型特殊 / 加了额外钻饰 / 过敏体质...">
-        </div>
-
-        <div class="section-actions">
-          <button class="btn btn-ghost" onclick="resetOrder()">清空</button>
-          <button class="btn btn-gold" onclick="saveOrder()">保存订单</button>
-        </div>
-      </div>
-
-      <!-- ── 右侧结果面板 ── -->
-      <div class="result-panel">
-        <div class="result-title">🦦 本单成本分析</div>
-
-        <div class="cost-breakdown" id="costBreakdown">
-          <div class="cost-row">
-            <span class="label">售价（券面价）</span>
-            <span class="val" id="r-face">¥—</span>
-          </div>
-          <div class="cost-row sub" id="r-commission-row">
-            <span class="label">↳ 平台佣金</span>
-            <span class="val" id="r-commission">—</span>
-          </div>
-          <div class="cost-row sub" id="r-actual-row">
-            <span class="label">↳ 实收到账</span>
-            <span class="val" id="r-actual">—</span>
-          </div>
-          <div class="divider" style="margin:6px 0"></div>
-          <div class="cost-row">
-            <span class="label">耗材成本</span>
-            <span class="val" id="r-material">¥0.00</span>
-          </div>
-          <div class="cost-row">
-            <span class="label">技师提成</span>
-            <span class="val" id="r-commission-cost">¥—</span>
-          </div>
-          <div class="cost-row sub" id="r-platform-fee-row">
-            <span class="label">平台佣金费</span>
-            <span class="val" id="r-platform-fee">—</span>
-          </div>
-          <div class="cost-row total">
-            <span class="label">变动成本合计</span>
-            <span class="val" id="r-total-cost">¥—</span>
-          </div>
-        </div>
-
-        <div class="profit-box">
-          <div class="profit-item">
-            <div class="p-label">毛利润</div>
-            <div class="p-val neutral" id="r-profit">—</div>
-          </div>
-          <div class="profit-item">
-            <div class="p-label">毛利率</div>
-            <div class="p-val neutral" id="r-margin">—</div>
-          </div>
-          <div class="gauge-wrap">
-            <svg width="180" height="100" viewBox="0 0 180 100">
-              <defs>
-                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#d4756a"/>
-                  <stop offset="50%" stop-color="#c9a84c"/>
-                  <stop offset="100%" stop-color="#6aaa8e"/>
-                </linearGradient>
-              </defs>
-              <!-- 背景弧 -->
-              <path d="M 20 90 A 70 70 0 0 1 160 90" fill="none" stroke="#2e2b24" stroke-width="10" stroke-linecap="round"/>
-              <!-- 彩色弧 -->
-              <path id="gaugeArc" d="M 20 90 A 70 70 0 0 1 160 90" fill="none" stroke="url(#gaugeGrad)" stroke-width="10" stroke-linecap="round"
-                stroke-dasharray="0 220" style="transition:stroke-dasharray 0.5s ease"/>
-              <!-- 指针 -->
-              <line id="gaugeNeedle" x1="90" y1="90" x2="90" y2="30" stroke="#e8e2d6" stroke-width="2" stroke-linecap="round"
-                style="transform-origin:90px 90px; transform:rotate(0deg); transition:transform 0.5s ease"/>
-              <circle cx="90" cy="90" r="5" fill="var(--surface2)" stroke="#e8e2d6" stroke-width="1.5"/>
-              <text id="gaugeLabel" x="90" y="80" text-anchor="middle" font-size="13" fill="#8a8070">—%</text>
-              <text x="18" y="100" font-size="9" fill="#4a4540">0%</text>
-              <text x="148" y="100" font-size="9" fill="#4a4540">100%</text>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══════════════ 历史订单 ══════════════ -->
-  <div id="tab-history" style="display:none">
-    <div class="card" style="margin-bottom:16px">
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <select id="filterChannel" onchange="renderHistory()" style="width:auto;min-width:120px">
-          <option value="">全部渠道</option>
-          <option value="offline">到店自然客</option>
-          <option value="meituan">美团团购</option>
-          <option value="douyin">抖音团购</option>
-        </select>
-        <select id="filterType" onchange="renderHistory()" style="width:auto;min-width:100px">
-          <option value="">全部类别</option>
-          <option value="lash">美睫</option>
-          <option value="nail">美甲</option>
-        </select>
-        <div style="margin-left:auto;font-size:12px;color:var(--text-dim)">
-          共 <span id="historyCount">0</span> 单 ·
-          平均毛利率 <span id="historyAvgMargin" style="color:var(--mint);font-family:'DM Mono',monospace">—</span>
-        </div>
-      </div>
-    </div>
-    <div class="order-list" id="orderList">
-      <div class="empty-state"><div class="empty-icon">📋</div>暂无订单记录</div>
-    </div>
-  </div>
-
-  <!-- ══════════════ 耗材库 ══════════════ -->
-  <div id="tab-materials" style="display:none">
-    <div class="card" style="margin-bottom:16px">
-      <div class="card-title">添加耗材</div>
-      <div class="form-row col4">
-        <div>
-          <label>耗材名称</label>
-          <input type="text" id="matName" placeholder="睫毛胶水 A+">
-        </div>
-        <div>
-          <label>单瓶/盒总价 (¥)</label>
-          <div class="input-prefix"><span>¥</span>
-            <input type="number" id="matPrice" placeholder="80">
-          </div>
-        </div>
-        <div>
-          <label>可用次数（副/套...）</label>
-          <input type="number" id="matUsage" placeholder="40">
-        </div>
-        <div style="display:flex;align-items:flex-end">
-          <button class="btn btn-gold" style="width:100%" onclick="addMaterial()">添加</button>
-        </div>
-      </div>
-    </div>
-    <div class="stock-grid" id="stockGrid">
-      <div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🧴</div>耗材库为空，先添加耗材</div>
-    </div>
-  </div>
-
-  <!-- ══════════════ 技师档案 ══════════════ -->
-  <div id="tab-technicians" style="display:none">
-    <div class="card" style="margin-bottom:16px">
-      <div class="card-title">添加技师</div>
-      <div class="form-row col4">
-        <div>
-          <label>技师姓名</label>
-          <input type="text" id="techName" placeholder="小王">
-        </div>
-        <div>
-          <label>美睫提成 (%)</label>
-          <div class="input-suffix">
-            <input type="number" id="techLashRate" placeholder="30">
-            <span>%</span>
-          </div>
-        </div>
-        <div>
-          <label>美甲提成 (%)</label>
-          <div class="input-suffix">
-            <input type="number" id="techNailRate" placeholder="25">
-            <span>%</span>
-          </div>
-        </div>
-        <div style="display:flex;align-items:flex-end">
-          <button class="btn btn-gold" style="width:100%" onclick="addTechnician()">添加</button>
-        </div>
-      </div>
-    </div>
-    <div class="technician-list" id="techList">
-      <div class="empty-state"><div class="empty-icon">💅</div>暂无技师，先添加技师档案</div>
-    </div>
-  </div>
-
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<div class="month-header">
+  <div class="mh-left">
+    <div class="mh-title" id="mh-title"></div>
+    <div class="mh-sub"   id="mh-sub"></div>
+  </div>
+  <div class="mh-right">
+    <div class="mh-rev"  id="mh-rev">¥0</div>
+    <div class="mh-rlbl">本月营收</div>
+  </div>
+</div>
+
+<div class="main-view" id="main-view">
+  <div class="calendar-view" id="view-calendar">
+    <div class="snake-track" id="snake-track">
+      <svg class="snake-svg" id="snake-svg"></svg>
+    </div>
+  </div>
+  <div class="page-view" id="view-orders"></div>
+  <div class="page-view" id="view-ranking"></div>
+  <div class="page-view" id="view-materials"></div>
+  <div class="page-view" id="view-technicians"></div>
+  <div class="page-view" id="view-neworder"></div>
+</div>
+
+<div class="bottom-nav">
+  <button class="nav-btn active" data-view="calendar" onclick="switchTab(this,'calendar')">
+    <span class="nav-ico">📅</span><span class="nav-lbl">日历</span>
+  </button>
+  <button class="nav-btn" data-view="orders" onclick="switchTab(this,'orders')">
+    <span class="nav-ico">📋</span><span class="nav-lbl">订单</span>
+  </button>
+  <button class="nav-btn" data-view="ranking" onclick="switchTab(this,'ranking')">
+    <span class="nav-ico">📊</span><span class="nav-lbl">排行</span>
+  </button>
+  <button class="nav-btn" data-view="materials" onclick="switchTab(this,'materials')">
+    <span class="nav-ico">🧴</span><span class="nav-lbl">耗材库</span>
+  </button>
+  <button class="nav-btn" data-view="technicians" onclick="switchTab(this,'technicians')">
+    <span class="nav-ico">💅</span><span class="nav-lbl">技师</span>
+  </button>
+  <button class="nav-btn" data-view="neworder" onclick="switchTab(this,'neworder')">
+    <span class="nav-ico">➕</span><span class="nav-lbl">新建订单</span>
+  </button>
+</div>
+
+<!-- 日历弹窗 -->
+<div class="overlay" id="overlay" onclick="overlayTap(event)">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-date"   id="sh-date"></div>
+    <div class="sh-status" id="sh-status"></div>
+    <div class="metrics-grid" id="sh-metrics"></div>
+    <div class="btn-row"   id="sh-btn-row"></div>
+    <button class="btn-sh btn-ghost" onclick="closeSheet()">关闭</button>
+  </div>
+</div>
 
 <script>
-// ═══════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════
-let materials   = JSON.parse(localStorage.getItem('ot_materials')   || '[]');
-let technicians = JSON.parse(localStorage.getItem('ot_technicians') || '[]');
-let orders      = JSON.parse(localStorage.getItem('ot_orders')      || '[]');
-let orderMaterials = []; // 当前订单耗材行
+// ══════════════════════════════════════════════════════════════════
+//  ENGINE
+// ══════════════════════════════════════════════════════════════════
+var Engine = (function(){
+  var KEYS = { history:'beauty_h', materials:'beauty_m', technicians:'beauty_t', orders:'beauty_o' };
+  function load(k){ try{ return JSON.parse(localStorage.getItem(k))||null; }catch(e){ return null; } }
+  function save(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
 
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-  document.getElementById('orderDate').value = new Date().toISOString().slice(0,10);
-  renderStockPicker();
-  renderTechSelect();
-  renderMaterials();
-  renderTechnicians();
-  renderHistory();
-  calc();
-});
+  function getHistory()    { return load(KEYS.history)||{}; }
+  function getDay(key)     { return getHistory()[key]||null; }
+  function setDay(key,data){ var h=getHistory(); h[key]=Object.assign(h[key]||{},data); save(KEYS.history,h); }
 
-// ═══════════════════════════════════════════
-//  TAB
-// ═══════════════════════════════════════════
-function switchTab(t) {
-  ['order','history','materials','technicians'].forEach(id => {
-    document.getElementById('tab-'+id).style.display = id===t ? '' : 'none';
-  });
-  document.querySelectorAll('.tab').forEach((el,i) => {
-    el.classList.toggle('active', ['order','history','materials','technicians'][i]===t);
-  });
-  if(t==='history') renderHistory();
-}
+  function getMaterials()      { return load(KEYS.materials)||[]; }
+  function addMaterial(m){
+    var list=getMaterials();
+    m.id=Date.now()+Math.random();
+    m.unitCost=parseFloat(m.totalPrice)/parseFloat(m.usageCount);
+    list.push(m); save(KEYS.materials,list); return list;
+  }
+  function deleteMaterial(id)  { save(KEYS.materials,getMaterials().filter(function(m){ return m.id!=id; })); }
 
-// ═══════════════════════════════════════════
-//  渠道切换
-// ═══════════════════════════════════════════
-function onChannelChange() {
-  const ch = document.getElementById('channel').value;
-  const isOnline = ch !== 'offline';
-  document.getElementById('discountWrap').style.display = isOnline ? '' : 'none';
-  document.getElementById('platformBlock').style.display = isOnline ? '' : 'none';
-  if(isOnline){
-    const badge = document.getElementById('platformBadge');
-    if(ch==='meituan'){
-      badge.className='platform-badge badge-meituan'; badge.textContent='美团团购';
-      document.getElementById('commissionRate').value='12';
-    } else {
-      badge.className='platform-badge badge-douyin'; badge.textContent='抖音团购';
-      document.getElementById('commissionRate').value='5';
+  function getTechnicians()    { return load(KEYS.technicians)||[]; }
+  function addTechnician(t){
+    var list=getTechnicians(); t.id=Date.now()+Math.random(); list.push(t); save(KEYS.technicians,list); return list;
+  }
+  function deleteTechnician(id){ save(KEYS.technicians,getTechnicians().filter(function(t){ return t.id!=id; })); }
+
+  function getOrders()   { return load(KEYS.orders)||[]; }
+
+  function recordOrder(o){
+    var list=getOrders();
+    o.id=Date.now(); o.createdAt=new Date().toISOString();
+    o.date=new Date().toLocaleDateString();
+    o.materialTotal=o.materialItems.reduce(function(a,i){ return a+i.subtotal; },0);
+    var commBase=o.commBase==='actual'?o.actualRevenue:o.facePrice;
+    o.techCost=commBase*(o.techRate/100);
+    o.platformFee=o.facePrice*(o.commissionRate/100);
+    o.totalVariableCost=o.materialTotal+o.techCost+o.platformFee;
+    o.grossProfit=o.facePrice-o.totalVariableCost;
+    o.grossMargin=o.facePrice>0?Math.round(o.grossProfit/o.facePrice*100):0;
+    list.unshift(o); save(KEYS.orders,list);
+    _syncDay(o.date); return o;
+  }
+
+  function _syncDay(dateKey){
+    var list=getOrders().filter(function(o){ return o.date===dateKey; });
+    var revenue=list.reduce(function(a,o){ return a+o.facePrice; },0);
+    var profit =list.reduce(function(a,o){ return a+o.grossProfit; },0);
+    var varCost=list.reduce(function(a,o){ return a+o.totalVariableCost; },0);
+    var gm=revenue>0?Math.round(profit/revenue*100):0;
+    setDay(dateKey,{ revenue:revenue, profit:profit, varCost:varCost, grossMargin:gm, orderCount:list.length });
+  }
+
+  function getProjectRanking(){
+    var map={};
+    getOrders().forEach(function(o){
+      if(!map[o.projectName]) map[o.projectName]={ name:o.projectName, type:o.projectType, count:0, revenue:0, profit:0 };
+      map[o.projectName].count++; map[o.projectName].revenue+=o.facePrice; map[o.projectName].profit+=o.grossProfit;
+    });
+    return Object.values(map).sort(function(a,b){ return b.count-a.count; });
+  }
+  function getMarginRanking(){
+    var map={};
+    getOrders().forEach(function(o){
+      if(!map[o.projectName]) map[o.projectName]={ name:o.projectName, type:o.projectType, totalMargin:0, count:0 };
+      map[o.projectName].totalMargin+=o.grossMargin; map[o.projectName].count++;
+    });
+    return Object.values(map).map(function(p){ return Object.assign({},p,{ avgMargin:Math.round(p.totalMargin/p.count) }); })
+      .sort(function(a,b){ return b.avgMargin-a.avgMargin; });
+  }
+
+  function getMonthStats(year,month){
+    var h=getHistory(), revenue=0, profit=0, days=0;
+    Object.keys(h).forEach(function(k){
+      var d=new Date(k);
+      if(d.getFullYear()===year&&d.getMonth()===month){
+        revenue+=parseFloat(h[k].revenue)||0; profit+=parseFloat(h[k].profit)||0;
+        if((parseFloat(h[k].revenue)||0)>0) days++;
+      }
+    });
+    return { revenue:revenue, profit:profit, days:days, gm:revenue>0?Math.round(profit/revenue*100):0 };
+  }
+  function getStreak(){
+    var h=getHistory(), now=new Date(), s=0;
+    for(var i=0;i<365;i++){
+      var d=new Date(now); d.setDate(d.getDate()-i);
+      var k=d.toLocaleDateString();
+      if(h[k]&&parseFloat(h[k].revenue)>0) s++; else if(i>0) break;
     }
-    onCommissionChange();
+    return s;
   }
-}
-
-function onCommissionChange() {
-  const face = parseFloat(document.getElementById('facePrice').value)||0;
-  const rate = parseFloat(document.getElementById('commissionRate').value)||0;
-  if(face>0) document.getElementById('actualRevenue').value = (face*(1-rate/100)).toFixed(2);
-}
-
-function onActualChange() {
-  const face = parseFloat(document.getElementById('facePrice').value)||0;
-  const actual = parseFloat(document.getElementById('actualRevenue').value)||0;
-  if(face>0 && actual>0) document.getElementById('commissionRate').value = ((1-actual/face)*100).toFixed(1);
-}
-
-// ═══════════════════════════════════════════
-//  耗材行
-// ═══════════════════════════════════════════
-function addFromStock() {
-  const picker = document.getElementById('stockPicker');
-  const idx = parseInt(picker.value);
-  const qty = parseFloat(document.getElementById('stockQty').value)||1;
-  if(isNaN(idx)) return;
-  const mat = materials[idx];
-  const unitCost = mat.price / mat.usage;
-  orderMaterials.push({ name: mat.name, unitCost, qty, fromStock: idx });
-  picker.value=''; document.getElementById('stockQty').value='';
-  renderOrderMaterials(); calc();
-}
-
-function addManualMaterial() {
-  orderMaterials.push({ name:'', unitCost:0, qty:1, fromStock:null });
-  renderOrderMaterials(); calc();
-}
-
-function renderOrderMaterials() {
-  const list = document.getElementById('materialList');
-  if(orderMaterials.length===0){ list.innerHTML=''; calcMaterialTotal(); return; }
-  list.innerHTML = orderMaterials.map((m,i) => `
-    <div class="material-item">
-      <input type="text" placeholder="耗材名称" value="${m.name}"
-        oninput="orderMaterials[${i}].name=this.value" style="font-size:12px">
-      <div class="input-prefix" style="font-size:12px">
-        <span>¥</span>
-        <input type="number" placeholder="0.00" value="${m.unitCost||''}"
-          oninput="orderMaterials[${i}].unitCost=parseFloat(this.value)||0;updateMatRow(${i})" style="padding-left:20px;font-size:12px">
-      </div>
-      <div class="input-suffix" style="font-size:12px">
-        <input type="number" placeholder="1" value="${m.qty}"
-          oninput="orderMaterials[${i}].qty=parseFloat(this.value)||0;updateMatRow(${i})" style="padding-right:28px;font-size:12px">
-        <span style="font-size:10px">次</span>
-      </div>
-      <div class="cost-preview" id="matRow${i}">¥${(m.unitCost*m.qty).toFixed(2)}</div>
-      <button class="del-btn" onclick="removeOrderMat(${i})">×</button>
-    </div>`).join('');
-}
-
-function updateMatRow(i) {
-  const m = orderMaterials[i];
-  const el = document.getElementById('matRow'+i);
-  if(el) el.textContent = '¥'+(m.unitCost*m.qty).toFixed(2);
-  calc();
-}
-
-function removeOrderMat(i) {
-  orderMaterials.splice(i,1);
-  renderOrderMaterials(); calc();
-}
-
-function calcMaterialTotal() {
-  return orderMaterials.reduce((s,m)=>s+m.unitCost*m.qty,0);
-}
-
-// ═══════════════════════════════════════════
-//  CALC
-// ═══════════════════════════════════════════
-function calc() {
-  const face   = parseFloat(document.getElementById('facePrice').value)||0;
-  const ch     = document.getElementById('channel').value;
-  const isOnline = ch!=='offline';
-  const commRate = parseFloat(document.getElementById('commissionRate').value)||0;
-  const actual = isOnline ? face*(1-commRate/100) : face;
-  const commBase = document.getElementById('commBase')?.value || 'face';
-
-  const matTotal = calcMaterialTotal();
-
-  // 技师提成
-  const techSel = document.getElementById('techSelect').value;
-  const projType = document.getElementById('projectType').value;
-  let techRate = 0;
-  if(techSel!=='') {
-    const tech = technicians[parseInt(techSel)];
-    techRate = projType==='lash' ? tech.lashRate : tech.nailRate;
+  function fmtMoney(v){
+    v=parseFloat(v)||0;
+    if(v>=10000) return '¥'+(v/10000).toFixed(1)+'w';
+    var s=v.toFixed(2); return '¥'+(s.endsWith('.00')?Math.round(v):s);
   }
-  const techBase = isOnline ? (commBase==='face'? face : actual) : face;
-  const techCost = techBase * techRate / 100;
 
-  // 平台佣金费用
-  const platformFee = isOnline ? face * commRate / 100 : 0;
+  return {
+    getDay, setDay,
+    getMaterials, addMaterial, deleteMaterial,
+    getTechnicians, addTechnician, deleteTechnician,
+    getOrders, recordOrder,
+    getProjectRanking, getMarginRanking,
+    getMonthStats, getStreak, fmtMoney
+  };
+})();
 
-  // 总变动成本
-  const totalCost = matTotal + techCost + platformFee;
+// ══════════════════════════════════════════════════════════════════
+//  APP
+// ══════════════════════════════════════════════════════════════════
+var now=new Date(), YEAR=now.getFullYear(), MONTH=now.getMonth(), TODAY=now.getDate();
+var DAYS=new Date(YEAR,MONTH+1,0).getDate();
+var MN=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+function dateKey(d){ return new Date(YEAR,MONTH,d).toLocaleDateString(); }
 
-  // 毛利（基于券面价）
-  const profit = face - totalCost;
-  const margin = face>0 ? profit/face*100 : 0;
+function switchTab(btn,viewId){
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.page-view').forEach(function(v){ v.classList.remove('visible'); });
+  var cal=document.getElementById('view-calendar');
+  cal.style.display='none';
+  if(viewId==='calendar'){ cal.style.display=''; return; }
+  var el=document.getElementById('view-'+viewId);
+  if(!el) return;
+  el.classList.add('visible');
+  if     (viewId==='orders')      renderOrders(el);
+  else if(viewId==='ranking')     renderRanking(el);
+  else if(viewId==='materials')   renderMaterials(el);
+  else if(viewId==='technicians') renderTechnicians(el);
+  else if(viewId==='neworder')    renderNewOrder(el);
+}
 
-  // 更新 UI
-  document.getElementById('r-material').textContent = '¥'+matTotal.toFixed(2);
-  document.getElementById('materialTotal').textContent = '¥'+matTotal.toFixed(2);
+function updateHeader(){
+  var s=Engine.getMonthStats(YEAR,MONTH);
+  document.getElementById('mh-title').textContent=YEAR+'年'+MN[MONTH];
+  document.getElementById('mh-sub').textContent='本月已完成 '+s.days+' 个工作日';
+  document.getElementById('mh-rev').textContent=Engine.fmtMoney(s.revenue);
+  document.getElementById('streak-val').textContent=Engine.getStreak();
+  document.getElementById('days-val').textContent=s.days;
+}
 
-  if(face>0){
-    document.getElementById('r-face').textContent = '¥'+face.toFixed(2);
+// ── 蛇形日历 ──────────────────────────────────────────────────────
+var XP=[50,68,80,68,50,32,20,32];
+function nodeXY(idx,W){ return { x:W*XP[idx%XP.length]/100, y:70+idx*100 }; }
+
+function buildSnake(){
+  var track=document.getElementById('snake-track');
+  var svg  =document.getElementById('snake-svg');
+  var h    =Engine.getMonthStats&&{};
+  // 重新从 localStorage 取历史
+  var rawH=(function(){ try{ return JSON.parse(localStorage.getItem('beauty_h'))||{}; }catch(e){ return {}; } })();
+  var W=track.offsetWidth||375;
+  var trackH=70+(DAYS+1)*100+60;
+  track.style.height=trackH+'px';
+  svg.setAttribute('height',trackH); svg.setAttribute('viewBox','0 0 '+W+' '+trackH);
+  var coords=[]; for(var i=0;i<=DAYS;i++) coords.push(nodeXY(i,W));
+
+  // 连线
+  var pd=''; for(var i=0;i<coords.length-1;i++){
+    var a=coords[i],b=coords[i+1]; if(i===0) pd='M '+a.x+' '+a.y;
+    pd+=' Q '+a.x+' '+((a.y+b.y)/2)+' '+b.x+' '+b.y;
+  }
+  var pe=document.createElementNS('http://www.w3.org/2000/svg','path');
+  pe.setAttribute('d',pd); pe.setAttribute('fill','none');
+  pe.setAttribute('stroke','#F0D0DA'); pe.setAttribute('stroke-width','8');
+  pe.setAttribute('stroke-linecap','round'); svg.appendChild(pe);
+
+  for(var day=1;day<=DAYS;day++){
+    var idx=day-1, pos=coords[idx], key=dateKey(day), data=rawH[key]||null;
+    var hasSales=data&&parseFloat(data.revenue)>0;
+    var isToday=day===TODAY, isPast=day<TODAY, isFuture=day>TODAY;
+
+    var node=document.createElement('div'); node.className='day-node';
+    node.style.left=pos.x+'px'; node.style.top=pos.y+'px';
+    node.style.animationDelay=(idx*35)+'ms';
+    if(isToday) node.classList.add('n-today');
+    else if(isFuture) node.classList.add('n-future');
+    else if(hasSales) node.classList.add('n-done');
+    else node.classList.add('n-missed');
+
+    if(isToday){ var tg=document.createElement('div'); tg.className='today-tag'; tg.textContent='今天'; node.appendChild(tg); }
+    var ne=document.createElement('div'); ne.className='nd-num'; ne.textContent=day; node.appendChild(ne);
+    var ie=document.createElement('div'); ie.className='nd-ico'; ie.textContent=isToday?'⭐':hasSales?'✓':isPast?'✗':''; node.appendChild(ie);
+
+    (function(d,k,dat,iT,iF,iP,hS){ node.onclick=function(){ openSheet(d,k,dat,iT,iF,iP,hS); }; })(day,key,data,isToday,isFuture,isPast,hasSales);
+    track.appendChild(node);
+  }
+
+  // 吉祥物
+  var mi=Math.floor(DAYS/2), mp=coords[mi];
+  var mas=document.createElement('div'); mas.className='mascot-node';
+  mas.style.left=(mp.x+(mp.x>W*.5?-80:80))+'px'; mas.style.top=mp.y+'px'; mas.textContent='🦦';
+  track.appendChild(mas);
+
+  // 宝箱
+  var cp=coords[DAYS], ch=document.createElement('div'); ch.className='chest-node';
+  ch.style.left=cp.x+'px'; ch.style.top=cp.y+'px';
+  ch.innerHTML='<div class="ch-icon">'+(TODAY>=DAYS?'🏆':'🔒')+'</div><div class="ch-label">月度总结</div>';
+  ch.onclick=openChest; track.appendChild(ch);
+}
+
+function openSheet(day,key,data,isToday,isFuture,isPast,hasSales){
+  document.getElementById('sh-date').textContent=(MONTH+1)+'月'+day+'日';
+  var m=document.getElementById('sh-metrics'), br=document.getElementById('sh-btn-row');
+  if(isFuture){ document.getElementById('sh-status').textContent='还没到这天哦 🔒'; m.innerHTML=''; br.innerHTML=''; }
+  else if(!hasSales&&!isToday){
+    document.getElementById('sh-status').textContent='这天没有接单';
+    m.innerHTML='<div class="mc"><div class="mc-lbl">营收</div><div class="mc-val">¥0</div></div><div class="mc"><div class="mc-lbl">毛利</div><div class="mc-val">—</div></div>';
+    br.innerHTML='';
   } else {
-    document.getElementById('r-face').textContent = '¥—';
+    var rawD=(function(){ try{ return JSON.parse(localStorage.getItem('beauty_h'))||{}; }catch(e){ return {}; } })();
+    var cur=rawD[key]||data||{};
+    var rev=parseFloat(cur.revenue)||0, prof=parseFloat(cur.profit)||0;
+    var varC=parseFloat(cur.varCost)||(rev-prof);
+    var gm=cur.grossMargin||(rev>0?Math.round(prof/rev*100):null);
+    var cnt=cur.orderCount||0;
+    document.getElementById('sh-status').textContent=isToday?'今天 · 进行中 ('+cnt+'单)':'已完成 '+cnt+' 单 ✓';
+    m.innerHTML=
+      '<div class="mc"><div class="mc-lbl">营收</div><div class="mc-val p">'+Engine.fmtMoney(rev)+'</div></div>'+
+      '<div class="mc"><div class="mc-lbl">毛利</div><div class="mc-val '+(prof>=0?'g':'r')+'">'+Engine.fmtMoney(prof)+'</div></div>'+
+      '<div class="mc"><div class="mc-lbl">变动成本</div><div class="mc-val">'+Engine.fmtMoney(varC)+'</div></div>'+
+      '<div class="mc"><div class="mc-lbl">毛利率</div><div class="mc-val '+(gm&&gm>=50?'g':'p')+'">'+(gm?gm+'%':'—')+'</div></div>';
+    br.innerHTML=isToday?'<button class="btn-sh btn-primary" onclick="closeSheet();switchTab(null,\'neworder\')"><span>✨</span> 新建订单</button>':'';
   }
-
-  const commRow = document.getElementById('r-commission-row');
-  const actualRow = document.getElementById('r-actual-row');
-  const platFeeRow = document.getElementById('r-platform-fee-row');
-
-  if(isOnline && face>0){
-    commRow.style.display=''; actualRow.style.display=''; platFeeRow.style.display='';
-    document.getElementById('r-commission').textContent = '-¥'+platformFee.toFixed(2)+' ('+commRate+'%)';
-    document.getElementById('r-actual').textContent = '¥'+actual.toFixed(2);
-    document.getElementById('r-platform-fee').textContent = '¥'+platformFee.toFixed(2);
-  } else {
-    commRow.style.display='none'; actualRow.style.display='none'; platFeeRow.style.display='none';
-  }
-
-  if(techCost>0){
-    document.getElementById('r-commission-cost').textContent = '¥'+techCost.toFixed(2)+' ('+techRate+'%)';
-  } else {
-    document.getElementById('r-commission-cost').textContent = '¥—';
-  }
-
-  if(face>0){
-    document.getElementById('r-total-cost').textContent = '¥'+totalCost.toFixed(2);
-    const profitEl = document.getElementById('r-profit');
-    const marginEl = document.getElementById('r-margin');
-    profitEl.textContent = (profit>=0?'¥':'−¥')+Math.abs(profit).toFixed(2);
-    marginEl.textContent = margin.toFixed(1)+'%';
-    profitEl.className = 'p-val '+(margin>=50?'positive':margin>=30?'neutral':'negative');
-    marginEl.className = 'p-val '+(margin>=50?'positive':margin>=30?'neutral':'negative');
-    updateGauge(margin);
-  } else {
-    document.getElementById('r-total-cost').textContent = '¥—';
-    updateGauge(0);
-  }
+  document.getElementById('overlay').classList.add('open');
+}
+function overlayTap(e){ if(e.target===document.getElementById('overlay')) closeSheet(); }
+function closeSheet()  { document.getElementById('overlay').classList.remove('open'); }
+function openChest(){
+  var s=Engine.getMonthStats(YEAR,MONTH);
+  alert('💅 '+(MONTH+1)+'月月度总结\n\n接单天数：'+s.days+' 天\n本月营收：'+Engine.fmtMoney(s.revenue)+'\n本月毛利：'+Engine.fmtMoney(s.profit)+'\n平均毛利率：'+s.gm+'%');
 }
 
-// ═══════════════════════════════════════════
-//  仪表盘
-// ═══════════════════════════════════════════
-function updateGauge(pct) {
-  pct = Math.max(0, Math.min(100, pct));
-  const arcLen = 220;
-  const filled = arcLen * pct / 100;
-  document.getElementById('gaugeArc').setAttribute('stroke-dasharray', filled+' '+(arcLen-filled));
-  const deg = -90 + pct * 1.8;
-  document.getElementById('gaugeNeedle').style.transform = `rotate(${deg}deg)`;
-  document.getElementById('gaugeLabel').textContent = pct.toFixed(1)+'%';
+function shake(el,msg){
+  el.placeholder=msg; el.classList.remove('shake');
+  requestAnimationFrame(function(){ el.classList.add('shake'); });
+  setTimeout(function(){ el.classList.remove('shake'); },600);
 }
 
-// ═══════════════════════════════════════════
-//  保存订单
-// ═══════════════════════════════════════════
-function saveOrder() {
-  const name = document.getElementById('projectName').value.trim();
-  const face = parseFloat(document.getElementById('facePrice').value)||0;
-  if(!name){ showToast('请填写项目名称'); return; }
-  if(!face){ showToast('请填写售价'); return; }
+// ══════════════════════════════════════════════════════════════════
+//  新建订单
+// ══════════════════════════════════════════════════════════════════
+function renderNewOrder(container){
+  var mats=Engine.getMaterials(), techs=Engine.getTechnicians();
+  var orderMats=[];
 
-  const ch = document.getElementById('channel').value;
-  const isOnline = ch!=='offline';
-  const commRate = parseFloat(document.getElementById('commissionRate').value)||0;
-  const actual = isOnline ? face*(1-commRate/100) : face;
-  const commBase = document.getElementById('commBase')?.value||'face';
-  const projType = document.getElementById('projectType').value;
-  const techSel = document.getElementById('techSelect').value;
-  let techRate=0, techName='';
-  if(techSel!==''){
-    const t=technicians[parseInt(techSel)];
-    techRate=projType==='lash'?t.lashRate:t.nailRate;
-    techName=t.name;
+  container.innerHTML='<div>'+
+    '<div class="page-title-bar"><span class="page-title-icon">✨</span><span class="page-title-text">新建订单</span></div>'+
+    '<div class="form-subtitle">记录一单，实时计算变动成本与毛利率</div>'+
+
+    // 项目信息
+    '<div class="form-card">'+
+      '<div class="section-label">项目信息</div>'+
+      '<div class="form-group"><label class="form-lbl">项目名称 *</label>'+
+        '<input id="o-name" class="form-inp" type="text" placeholder="如：日式美睫 D型 0.07mm"></div>'+
+      '<div class="form-row">'+
+        '<div class="form-group half"><label class="form-lbl">项目类别</label>'+
+          '<div class="cat-chips" style="margin-top:4px" id="type-chips">'+
+            '<button class="cat-chip active" data-val="lash">💜 美睫</button>'+
+            '<button class="cat-chip" data-val="nail">💅 美甲</button>'+
+          '</div></div>'+
+        '<div class="form-group half"><label class="form-lbl">技师</label>'+
+          '<select id="o-tech" class="form-inp">'+
+            '<option value="">选择技师…</option>'+
+            techs.map(function(t){ return '<option value="'+t.id+'">'+t.name+'</option>'; }).join('')+
+          '</select></div>'+
+      '</div>'+
+    '</div>'+
+
+    // 渠道与收费
+    '<div class="form-card">'+
+      '<div class="section-label">渠道 & 收费</div>'+
+      '<div class="form-row">'+
+        '<div class="form-group half"><label class="form-lbl">销售渠道</label>'+
+          '<select id="o-channel" class="form-inp" onchange="noChChange()">'+
+            '<option value="offline">到店自然客</option>'+
+            '<option value="meituan">美团团购</option>'+
+            '<option value="douyin">抖音团购</option>'+
+          '</select></div>'+
+        '<div class="form-group half"><label class="form-lbl">券面价 / 售价 (¥)</label>'+
+          '<input id="o-face" class="form-inp" type="number" step="0.01" min="0" placeholder="299" oninput="noFaceChange()"></div>'+
+      '</div>'+
+      '<div id="platform-block" style="display:none">'+
+        '<div class="form-row">'+
+          '<div class="form-group half"><label class="form-lbl">平台佣金率 (%)</label>'+
+            '<input id="o-comm" class="form-inp" type="number" step="0.1" min="0" max="100" placeholder="12" oninput="noCommChange()"></div>'+
+          '<div class="form-group half"><label class="form-lbl">平台实收 (¥)</label>'+
+            '<input id="o-actual" class="form-inp" type="number" step="0.01" min="0" placeholder="263" oninput="noActualChange()"></div>'+
+        '</div>'+
+        '<div class="form-group"><label class="form-lbl">技师提成基数（各店规则不同）</label>'+
+          '<div class="cat-chips" id="base-chips">'+
+            '<button class="cat-chip active" data-val="face">按券面价</button>'+
+            '<button class="cat-chip" data-val="actual">按平台实收</button>'+
+          '</div></div>'+
+      '</div>'+
+    '</div>'+
+
+    // 耗材
+    '<div class="form-card">'+
+      '<div class="section-label">耗材成本</div>'+
+      '<div class="form-row" style="margin-bottom:10px">'+
+        '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">从耗材库选择</label>'+
+          '<select id="o-mat-pick" class="form-inp">'+
+            '<option value="">选择耗材…</option>'+
+            mats.map(function(m){ return '<option value="'+m.id+'">'+m.name+'（¥'+m.unitCost.toFixed(2)+'/次）</option>'; }).join('')+
+          '</select></div>'+
+        '<div style="display:flex;align-items:flex-end;gap:6px;flex:1">'+
+          '<div class="form-group half" style="margin-bottom:0;flex:1"><label class="form-lbl">用量</label>'+
+            '<input id="o-mat-qty" class="form-inp" type="number" step="0.01" min="0.01" placeholder="1"></div>'+
+          '<button class="cat-chip active" style="margin-bottom:2px;white-space:nowrap;flex-shrink:0" onclick="noAddMat()">＋ 添加</button>'+
+        '</div>'+
+      '</div>'+
+      '<div id="mat-rows"></div>'+
+      '<button style="width:100%;margin-top:6px;padding:10px;border:2px dashed var(--border);border-radius:12px;background:none;color:var(--text-3);font-size:13px;font-weight:800;cursor:pointer;font-family:inherit" onclick="noAddManual()">＋ 手动填写耗材</button>'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">'+
+        '<span style="font-size:13px;color:var(--text-3);font-weight:700">耗材合计</span>'+
+        '<span id="o-mat-total" style="font-size:18px;font-weight:900;color:var(--pink)">¥0.00</span>'+
+      '</div>'+
+    '</div>'+
+
+    // 备注
+    '<div class="form-card">'+
+      '<div class="section-label">备注</div>'+
+      '<input id="o-note" class="form-inp" type="text" placeholder="手型特殊 / 额外钻饰 / 过敏体质…">'+
+    '</div>'+
+
+    // 成本预览
+    '<div class="form-card">'+
+      '<div class="section-label">变动成本预览</div>'+
+      '<div id="cost-preview" style="display:flex;flex-direction:column;gap:10px"><div style="color:var(--text-3);font-size:13px">填写售价后显示预览</div></div>'+
+    '</div>'+
+
+    '<button class="form-submit" onclick="noSubmit()">✨ 保存订单</button>'+
+    '<div class="form-success hidden" id="o-succ">✅ 订单已记录！</div>'+
+    '<div style="height:20px"></div>'+
+  '</div>';
+
+  // 类别/基数芯片切换
+  function chipGroup(selector){
+    container.querySelectorAll(selector).forEach(function(btn){
+      btn.onclick=function(){
+        container.querySelectorAll(selector).forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active'); noCalc();
+      };
+    });
   }
-  const techBase = isOnline?(commBase==='face'?face:actual):face;
-  const techCost = techBase*techRate/100;
-  const platformFee = isOnline?face*commRate/100:0;
-  const matTotal = calcMaterialTotal();
-  const totalCost = matTotal+techCost+platformFee;
-  const profit = face-totalCost;
-  const margin = face>0?profit/face*100:0;
+  chipGroup('#type-chips .cat-chip');
+  chipGroup('#base-chips .cat-chip');
+  container.querySelector('#o-tech').onchange=noCalc;
 
-  orders.unshift({
-    id: Date.now(),
-    name, type: projType, channel: ch,
-    facePrice: face, actualRevenue: actual,
-    commissionRate: commRate,
-    techName, techRate, techCost,
-    platformFee, matTotal, totalCost,
-    profit, margin,
-    duration: document.getElementById('duration').value,
-    date: document.getElementById('orderDate').value,
-    note: document.getElementById('orderNote').value,
-    materials: JSON.parse(JSON.stringify(orderMaterials))
-  });
-  localStorage.setItem('ot_orders', JSON.stringify(orders));
-  showToast('订单已保存 ✓');
-  renderHistory();
+  function renderMatRows(){
+    var el=container.querySelector('#mat-rows');
+    if(!orderMats.length){ el.innerHTML=''; noCalc(); return; }
+    el.innerHTML=orderMats.map(function(m,i){
+      return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;background:var(--gray-card);border-radius:10px;padding:8px 10px">'+
+        '<input class="form-inp" style="flex:2;padding:7px 10px;font-size:13px" placeholder="耗材名称" value="'+m.name+'" oninput="window._om['+i+'].name=this.value">'+
+        '<input class="form-inp" style="flex:1;padding:7px 8px;font-size:12px" type="number" placeholder="单次¥" value="'+(m.unitCost||'')+'" oninput="window._om['+i+'].unitCost=parseFloat(this.value)||0;window._om['+i+'].subtotal=window._om['+i+'].unitCost*window._om['+i+'].qty;window._reRender()">'+
+        '<input class="form-inp" style="width:44px;padding:7px 4px;font-size:13px;text-align:center" type="number" placeholder="×" value="'+m.qty+'" oninput="window._om['+i+'].qty=parseFloat(this.value)||0;window._om['+i+'].subtotal=window._om['+i+'].unitCost*window._om['+i+'].qty;window._reRender()">'+
+        '<span style="font-size:12px;font-weight:800;color:var(--pink);min-width:40px;text-align:right">¥'+(m.unitCost*m.qty).toFixed(2)+'</span>'+
+        '<button onclick="window._om.splice('+i+',1);window._reRender()" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--text-3)">✕</button>'+
+      '</div>';
+    }).join('');
+    noCalc();
+  }
+  window._om=orderMats; window._reRender=renderMatRows;
+
+  window.noAddMat=function(){
+    var pick=container.querySelector('#o-mat-pick');
+    var qty =parseFloat(container.querySelector('#o-mat-qty').value)||1;
+    if(!pick.value) return;
+    var mat=Engine.getMaterials().find(function(m){ return m.id==pick.value; });
+    if(!mat) return;
+    orderMats.push({ matId:mat.id, name:mat.name, unitCost:mat.unitCost, qty:qty, subtotal:mat.unitCost*qty });
+    pick.value=''; container.querySelector('#o-mat-qty').value=''; renderMatRows();
+  };
+  window.noAddManual=function(){
+    orderMats.push({ matId:null, name:'', unitCost:0, qty:1, subtotal:0 }); renderMatRows();
+  };
+
+  window.noChChange=function(){
+    var ch=container.querySelector('#o-channel').value, isOnline=ch!=='offline';
+    container.querySelector('#platform-block').style.display=isOnline?'':'none';
+    if(ch==='meituan') container.querySelector('#o-comm').value='12';
+    if(ch==='douyin')  container.querySelector('#o-comm').value='5';
+    if(isOnline) noCommChange(); else noCalc();
+  };
+  window.noFaceChange=function(){ noCommChange(); };
+  window.noCommChange=function(){
+    var face=parseFloat(container.querySelector('#o-face').value)||0;
+    var rate=parseFloat(container.querySelector('#o-comm')&&container.querySelector('#o-comm').value)||0;
+    if(face>0&&container.querySelector('#o-actual')) container.querySelector('#o-actual').value=(face*(1-rate/100)).toFixed(2);
+    noCalc();
+  };
+  window.noActualChange=function(){
+    var face=parseFloat(container.querySelector('#o-face').value)||0;
+    var actual=parseFloat(container.querySelector('#o-actual').value)||0;
+    if(face>0&&actual>0&&container.querySelector('#o-comm')) container.querySelector('#o-comm').value=((1-actual/face)*100).toFixed(1);
+    noCalc();
+  };
+
+  function noCalc(){
+    var face=parseFloat(container.querySelector('#o-face')&&container.querySelector('#o-face').value)||0;
+    var ch=container.querySelector('#o-channel')&&container.querySelector('#o-channel').value||'offline';
+    var isOnline=ch!=='offline';
+    var commRate=parseFloat(container.querySelector('#o-comm')&&container.querySelector('#o-comm').value)||0;
+    var actual=isOnline?face*(1-commRate/100):face;
+    var baseChip=container.querySelector('#base-chips .cat-chip.active');
+    var baseMode=baseChip?baseChip.dataset.val:'face';
+    var commBase=baseMode==='actual'?actual:face;
+
+    var techSel=container.querySelector('#o-tech').value;
+    var tech=Engine.getTechnicians().find(function(t){ return t.id==techSel; });
+    var typeChip=container.querySelector('#type-chips .cat-chip.active');
+    var pType=typeChip?typeChip.dataset.val:'lash';
+    var techRate=tech?(pType==='lash'?parseFloat(tech.lashRate):parseFloat(tech.nailRate)):0;
+
+    var matTotal=orderMats.reduce(function(a,m){ return a+m.subtotal; },0);
+    var techCost=commBase*(techRate/100);
+    var platformFee=isOnline?face*(commRate/100):0;
+    var totalVC=matTotal+techCost+platformFee;
+    var grossProfit=face-totalVC;
+    var margin=face>0?Math.round(grossProfit/face*100):0;
+
+    var mtEl=container.querySelector('#o-mat-total');
+    if(mtEl) mtEl.textContent='¥'+matTotal.toFixed(2);
+
+    var pv=container.querySelector('#cost-preview');
+    if(!pv||face<=0){ if(pv) pv.innerHTML='<div style="color:var(--text-3);font-size:13px">填写售价后显示预览</div>'; return; }
+
+    function row(label,val,big,col){
+      return '<div style="display:flex;justify-content:space-between;align-items:center;'+(big?'border-top:1px solid var(--border);padding-top:10px;margin-top:4px':'')+'">'+
+        '<span style="font-size:13px;color:var(--text-3);font-weight:700">'+label+'</span>'+
+        '<span style="font-size:'+(big?'16':'14')+'px;font-weight:'+(big?900:800)+';color:'+(col||'var(--text)')+'">'+val+'</span>'+
+      '</div>';
+    }
+    var html=row('🏷 券面价 / 售价','¥'+face.toFixed(2),false);
+    if(isOnline){
+      html+=row('  ↳ 平台佣金（'+commRate+'%）','-¥'+platformFee.toFixed(2),false);
+      html+=row('  ↳ 实收到账','¥'+actual.toFixed(2),false);
+    }
+    html+=row('🧴 耗材成本','¥'+matTotal.toFixed(2),false);
+    html+=row('💅 技师提成（'+techRate+'%，基数：'+(baseMode==='actual'?'实收':'券面价')+'）','¥'+techCost.toFixed(2),false);
+    if(isOnline) html+=row('📱 平台佣金费','¥'+platformFee.toFixed(2),false);
+    html+=row('📦 变动成本合计','¥'+totalVC.toFixed(2),true);
+    html+=row('💰 毛利润',(grossProfit>=0?'':'−')+'¥'+Math.abs(grossProfit).toFixed(2),true,grossProfit>=0?'var(--green)':'var(--red)');
+    var mc=margin>=50?'var(--green)':margin>=30?'var(--gold)':'var(--red)';
+    html+=row('📈 毛利率（券面价为分母）',margin+'%',true,mc);
+    pv.innerHTML=html;
+  }
+  window.noCalc=noCalc;
+
+  window.noSubmit=function(){
+    var name=container.querySelector('#o-name').value.trim();
+    var face=parseFloat(container.querySelector('#o-face').value)||0;
+    if(!name) return shake(container.querySelector('#o-name'),'请填写项目名称');
+    if(!face) return shake(container.querySelector('#o-face'),'请填写售价');
+    var ch=container.querySelector('#o-channel').value, isOnline=ch!=='offline';
+    var commRate=parseFloat(container.querySelector('#o-comm')&&container.querySelector('#o-comm').value)||0;
+    var actual=isOnline?face*(1-commRate/100):face;
+    var baseChip=container.querySelector('#base-chips .cat-chip.active');
+    var baseMode=baseChip?baseChip.dataset.val:'face';
+    var typeChip=container.querySelector('#type-chips .cat-chip.active');
+    var pType=typeChip?typeChip.dataset.val:'lash';
+    var techSel=container.querySelector('#o-tech').value;
+    var tech=Engine.getTechnicians().find(function(t){ return t.id==techSel; });
+    var techRate=tech?(pType==='lash'?parseFloat(tech.lashRate):parseFloat(tech.nailRate)):0;
+    Engine.recordOrder({
+      projectName:name, projectType:pType,
+      techId:techSel, techName:tech?tech.name:'', techRate:techRate,
+      channel:ch, facePrice:face, commissionRate:commRate, actualRevenue:actual, commBase:baseMode,
+      materialItems:orderMats.map(function(m){ return Object.assign({},m); }),
+      note:container.querySelector('#o-note').value,
+    });
+    // 清空
+    container.querySelector('#o-name').value='';
+    container.querySelector('#o-face').value='';
+    if(container.querySelector('#o-actual')) container.querySelector('#o-actual').value='';
+    if(container.querySelector('#o-comm'))   container.querySelector('#o-comm').value='';
+    container.querySelector('#o-note').value='';
+    orderMats.length=0; renderMatRows(); noCalc();
+    var su=container.querySelector('#o-succ'); su.classList.remove('hidden');
+    setTimeout(function(){ su.classList.add('hidden'); },2500);
+    updateHeader();
+  };
+
+  noCalc();
 }
 
-function resetOrder() {
-  document.getElementById('projectName').value='';
-  document.getElementById('facePrice').value='';
-  document.getElementById('actualRevenue').value='';
-  document.getElementById('commissionRate').value='';
-  document.getElementById('orderNote').value='';
-  orderMaterials=[];
-  renderOrderMaterials();
-  calc();
+// ══════════════════════════════════════════════════════════════════
+//  订单历史
+// ══════════════════════════════════════════════════════════════════
+function renderOrders(container){
+  var orders=Engine.getOrders();
+  var chMap={ offline:'到店', meituan:'美团', douyin:'抖音' };
+  container.innerHTML='<div>'+
+    '<div class="page-title-bar"><span class="page-title-icon">📋</span><span class="page-title-text">订单记录</span></div>'+
+    '<div class="form-row" style="margin-bottom:12px;gap:8px">'+
+      '<select id="f-ch" class="form-inp" onchange="filterOrders()" style="flex:1;padding:10px 12px">'+
+        '<option value="">全部渠道</option><option value="offline">到店</option><option value="meituan">美团</option><option value="douyin">抖音</option>'+
+      '</select>'+
+      '<select id="f-type" class="form-inp" onchange="filterOrders()" style="flex:1;padding:10px 12px">'+
+        '<option value="">全部类别</option><option value="lash">美睫</option><option value="nail">美甲</option>'+
+      '</select>'+
+    '</div>'+
+    '<div style="font-size:12px;color:var(--text-3);font-weight:700;margin-bottom:12px">'+
+      '共 <span id="o-count">'+orders.length+'</span> 单 · 平均毛利率 '+
+      '<span id="o-avg" style="color:var(--pink);font-weight:900">'+(orders.length?Math.round(orders.reduce(function(a,o){ return a+o.grossMargin; },0)/orders.length)+'%':'—')+'</span>'+
+    '</div>'+
+    '<div class="order-list" id="o-list"></div>'+
+  '</div>';
+
+  window.filterOrders=function(){
+    var ch=container.querySelector('#f-ch').value, ty=container.querySelector('#f-type').value;
+    var filtered=orders.filter(function(o){ return (!ch||o.channel===ch)&&(!ty||o.projectType===ty); });
+    container.querySelector('#o-count').textContent=filtered.length;
+    container.querySelector('#o-avg').textContent=filtered.length?Math.round(filtered.reduce(function(a,o){ return a+o.grossMargin; },0)/filtered.length)+'%':'—';
+    var el=container.querySelector('#o-list');
+    if(!filtered.length){ el.innerHTML='<div style="text-align:center;color:var(--text-3);padding:40px;font-size:14px">暂无订单记录</div>'; return; }
+    el.innerHTML=filtered.map(function(o){
+      var mc=o.grossMargin>=50?'good':o.grossMargin>=30?'warn':'bad';
+      return '<div class="order-card">'+
+        '<div class="oc-header">'+
+          '<div><div class="oc-name">'+o.projectName+'</div>'+
+          '<div class="oc-date">'+o.date+(o.techName?' · '+o.techName:'')+'</div></div>'+
+          '<div class="oc-margin '+mc+'">'+o.grossMargin+'%</div>'+
+        '</div>'+
+        '<div class="oc-meta">'+
+          '<span class="oc-tag '+(o.projectType==='lash'?'tag-lash':'tag-nail')+'">'+(o.projectType==='lash'?'💜 美睫':'💅 美甲')+'</span>'+
+          '<span class="oc-tag tag-'+o.channel+'">'+chMap[o.channel]+'</span>'+
+          (o.note?'<span class="oc-tag" style="background:var(--gray-card);color:var(--text-3);border:1px solid var(--border)">'+o.note+'</span>':'')+
+        '</div>'+
+        '<div class="oc-costs">'+
+          '<div class="oc-cost-item"><div class="oc-cost-lbl">售价</div><div class="oc-cost-val">¥'+o.facePrice.toFixed(0)+'</div></div>'+
+          '<div class="oc-cost-item"><div class="oc-cost-lbl">耗材</div><div class="oc-cost-val">¥'+o.materialTotal.toFixed(0)+'</div></div>'+
+          '<div class="oc-cost-item"><div class="oc-cost-lbl">提成</div><div class="oc-cost-val">¥'+o.techCost.toFixed(0)+'</div></div>'+
+          '<div class="oc-cost-item"><div class="oc-cost-lbl">毛利</div><div class="oc-cost-val" style="color:'+(o.grossProfit>=0?'var(--green)':'var(--red)')+'">¥'+o.grossProfit.toFixed(0)+'</div></div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  };
+  window.filterOrders();
 }
 
-// ═══════════════════════════════════════════
-//  历史订单
-// ═══════════════════════════════════════════
-function renderHistory() {
-  const chFilter = document.getElementById('filterChannel').value;
-  const tyFilter = document.getElementById('filterType').value;
-  let filtered = orders.filter(o=>{
-    if(chFilter && o.channel!==chFilter) return false;
-    if(tyFilter && o.type!==tyFilter) return false;
-    return true;
-  });
-  document.getElementById('historyCount').textContent = filtered.length;
-  const avgM = filtered.length ? filtered.reduce((s,o)=>s+o.margin,0)/filtered.length : 0;
-  document.getElementById('historyAvgMargin').textContent = filtered.length ? avgM.toFixed(1)+'%' : '—';
-
-  const el = document.getElementById('orderList');
-  if(!filtered.length){
-    el.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div>暂无符合条件的订单</div>';
-    return;
+// ══════════════════════════════════════════════════════════════════
+//  排行榜
+// ══════════════════════════════════════════════════════════════════
+function renderRanking(container){
+  var medals=['🥇','🥈','🥉'];
+  var BAR=['#FF6B9D','#9B6DFF','#4CAF50','#F5A623','#2196F3'];
+  function card(item,i,val,max,valLabel,subLabel,valColor){
+    var pct=max>0?Math.max(4,Math.round(val/max*100)):4;
+    var medal=i<3?medals[i]:'<span class="rank-num">'+(i+1)+'</span>';
+    return '<div class="rank-card '+(i<3?'rank-top-'+(i+1):'')+'">'+
+      '<div class="rc-medal">'+medal+'</div>'+
+      '<div class="rc-body">'+
+        '<div class="rc-name">'+item.name+' <span style="font-size:11px;color:var(--text-3)">'+(item.type==='lash'?'美睫':'美甲')+'</span></div>'+
+        '<div class="rc-bar-wrap"><div class="rc-bar" style="width:'+pct+'%;background:'+BAR[Math.min(i,4)]+'"></div></div>'+
+        '<div class="rc-sub">'+subLabel+'</div>'+
+      '</div>'+
+      '<div class="rc-val" style="color:'+(valColor||'var(--pink)')+'">'+valLabel+'</div>'+
+    '</div>';
   }
 
-  const chMap = {offline:'到店',meituan:'美团',douyin:'抖音'};
-  const chBadge = {offline:'badge-offline',meituan:'badge-meituan',douyin:'badge-douyin'};
-  el.innerHTML = filtered.map(o => `
-    <div class="order-card">
-      <div class="order-meta">
-        <div class="order-name">${o.name}</div>
-        <div class="order-tags">
-          <span class="order-tag ${o.type==='lash'?'tag-lash':'tag-nail'}">${o.type==='lash'?'美睫':'美甲'}</span>
-          <span class="platform-badge ${chBadge[o.channel]}" style="font-size:10px;padding:2px 6px">${chMap[o.channel]}</span>
-          ${o.techName?`<span style="font-size:11px;color:var(--text-dim)">${o.techName}</span>`:''}
-        </div>
-        <div class="order-date">${o.date} ${o.duration?'· '+o.duration+'min':''} ${o.note?'· '+o.note:''}</div>
-      </div>
-      <div class="order-profit">
-        <div class="revenue">售¥${o.facePrice.toFixed(0)} 成本¥${o.totalCost.toFixed(0)}</div>
-        <div class="margin ${o.margin>=50?'good':o.margin>=30?'warn':'bad'}">${o.margin.toFixed(1)}%</div>
-      </div>
-    </div>`).join('');
+  var cData=Engine.getProjectRanking(), cMax=cData.length?cData[0].count:1;
+  var mData=Engine.getMarginRanking(),  mMax=mData.length?mData[0].avgMargin:1;
+
+  container.innerHTML='<div>'+
+    '<div class="page-title-bar"><span class="page-title-icon">📊</span><span class="page-title-text">项目排行</span></div>'+
+    '<div class="rank-tab-row">'+
+      '<button class="rank-tab active" onclick="rankTab(\'count\',this)">接单量榜</button>'+
+      '<button class="rank-tab" onclick="rankTab(\'margin\',this)">毛利率榜</button>'+
+    '</div>'+
+    '<div id="rank-count">'+
+      (cData.length?'<div class="rank-subtitle">开业以来各项目累计接单数量</div>'+cData.map(function(item,i){ return card(item,i,item.count,cMax,item.count+'单',Engine.fmtMoney(item.revenue)+'营收'); }).join(''):'<div class="rank-empty">还没有订单记录，快去接单吧！</div>')+
+    '</div>'+
+    '<div id="rank-margin" style="display:none">'+
+      (mData.length?'<div class="rank-subtitle">各项目平均毛利率（以券面价为分母）</div>'+mData.map(function(item,i){
+        var col=item.avgMargin>=50?'var(--green)':item.avgMargin>=30?'var(--gold)':'var(--red)';
+        return card(item,i,item.avgMargin,mMax,item.avgMargin+'%',item.count+'单均值',col);
+      }).join(''):'<div class="rank-empty">暂无数据</div>')+
+    '</div>'+
+  '</div>';
+
+  window.rankTab=function(tab,btn){
+    container.querySelectorAll('.rank-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active');
+    container.querySelector('#rank-count').style.display=tab==='count'?'':'none';
+    container.querySelector('#rank-margin').style.display=tab==='margin'?'':'none';
+  };
 }
 
-// ═══════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
 //  耗材库
-// ═══════════════════════════════════════════
-function addMaterial() {
-  const name  = document.getElementById('matName').value.trim();
-  const price = parseFloat(document.getElementById('matPrice').value)||0;
-  const usage = parseFloat(document.getElementById('matUsage').value)||0;
-  if(!name||!price||!usage){ showToast('请填写完整耗材信息'); return; }
-  materials.push({name,price,usage});
-  localStorage.setItem('ot_materials', JSON.stringify(materials));
-  document.getElementById('matName').value='';
-  document.getElementById('matPrice').value='';
-  document.getElementById('matUsage').value='';
-  renderMaterials(); renderStockPicker();
-  showToast('耗材已添加 ✓');
-}
+// ══════════════════════════════════════════════════════════════════
+function renderMaterials(container){
+  function draw(){
+    var mats=Engine.getMaterials();
+    container.innerHTML='<div>'+
+      '<div class="page-title-bar"><span class="page-title-icon">🧴</span><span class="page-title-text">耗材库</span></div>'+
+      '<div class="form-subtitle">录入「总价÷次数」自动算出单次成本</div>'+
+      '<div class="form-card">'+
+        '<div class="form-row">'+
+          '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">耗材名称 *</label>'+
+            '<input id="m-name" class="form-inp" type="text" placeholder="睫毛胶水 A+"></div>'+
+          '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">类别</label>'+
+            '<select id="m-cat" class="form-inp"><option>美睫耗材</option><option>美甲耗材</option><option>通用辅材</option></select></div>'+
+        '</div>'+
+        '<div style="height:10px"></div>'+
+        '<div class="form-row">'+
+          '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">单瓶/盒总价 (¥) *</label>'+
+            '<input id="m-price" class="form-inp" type="number" step="0.01" min="0" placeholder="80" oninput="mPreview()"></div>'+
+          '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">可用次数（副/套） *</label>'+
+            '<input id="m-usage" class="form-inp" type="number" step="1" min="1" placeholder="40" oninput="mPreview()"></div>'+
+        '</div>'+
+        '<div class="margin-preview hidden" id="m-prev" style="margin-top:10px">'+
+          '<span class="mp-label">单次成本</span><span class="mp-unit" id="m-uc">¥—</span>'+
+          '<span style="font-size:12px;color:var(--text-3);font-weight:700" id="m-note"></span>'+
+        '</div>'+
+        '<div style="height:12px"></div>'+
+        '<button class="form-submit" onclick="mSubmit()">🧴 添加耗材</button>'+
+        '<div class="form-success hidden" id="m-succ">✅ 耗材已添加！</div>'+
+      '</div>'+
+      '<div class="section-label">已有耗材（'+mats.length+'种）</div>'+
+      '<div class="mat-grid">'+
+        (mats.length
+          ?mats.map(function(m){ return '<div class="mat-card">'+
+              '<button class="mat-del" onclick="mDel(\''+m.id+'\')">✕</button>'+
+              '<div class="mat-name">'+m.name+'</div>'+
+              '<div class="mat-detail">'+m.category+' · ¥'+m.totalPrice+'/'+m.usageCount+'次</div>'+
+              '<div class="mat-unit-cost">¥'+m.unitCost.toFixed(2)+'<span> /次</span></div>'+
+            '</div>'; }).join('')
+          :'<div style="grid-column:1/-1;text-align:center;color:var(--text-3);padding:32px;font-size:14px">暂无耗材，先添加一个吧</div>'
+        )+
+      '</div>'+
+    '</div>';
 
-function renderMaterials() {
-  const grid = document.getElementById('stockGrid');
-  if(!materials.length){
-    grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🧴</div>耗材库为空，先添加耗材</div>';
-    return;
+    window.mPreview=function(){
+      var p=parseFloat(container.querySelector('#m-price').value)||0;
+      var u=parseFloat(container.querySelector('#m-usage').value)||0;
+      var pv=container.querySelector('#m-prev');
+      if(p>0&&u>0){ pv.classList.remove('hidden'); container.querySelector('#m-uc').textContent='¥'+(p/u).toFixed(2)+' / 次'; container.querySelector('#m-note').textContent='¥'+p+' ÷ '+u+'次'; }
+      else pv.classList.add('hidden');
+    };
+    window.mSubmit=function(){
+      var name=container.querySelector('#m-name').value.trim();
+      var cat =container.querySelector('#m-cat').value;
+      var price=parseFloat(container.querySelector('#m-price').value);
+      var usage=parseFloat(container.querySelector('#m-usage').value);
+      if(!name)  return shake(container.querySelector('#m-name'),'请填写耗材名称');
+      if(!price) return shake(container.querySelector('#m-price'),'请填写总价');
+      if(!usage) return shake(container.querySelector('#m-usage'),'请填写次数');
+      Engine.addMaterial({ name:name, category:cat, totalPrice:price, usageCount:usage });
+      draw();
+    };
+    window.mDel=function(id){
+      if(!confirm('确定删除？')) return; Engine.deleteMaterial(id); draw();
+    };
   }
-  grid.innerHTML = materials.map((m,i)=>`
-    <div class="stock-item">
-      <div style="display:flex;justify-content:space-between;align-items:start">
-        <div class="stock-name">${m.name}</div>
-        <button class="del-btn" onclick="deleteMaterial(${i})">×</button>
-      </div>
-      <div class="stock-detail">¥${m.price} / ${m.usage}次</div>
-      <div class="stock-cost">¥${(m.price/m.usage).toFixed(2)}<span> /次</span></div>
-    </div>`).join('');
+  draw();
 }
 
-function deleteMaterial(i) {
-  materials.splice(i,1);
-  localStorage.setItem('ot_materials', JSON.stringify(materials));
-  renderMaterials(); renderStockPicker();
-}
+// ══════════════════════════════════════════════════════════════════
+//  技师档案
+// ══════════════════════════════════════════════════════════════════
+function renderTechnicians(container){
+  var AVATARS=['🌸','🌺','🌻','🌹','🍀','🦋','🌙','⭐'];
+  function draw(){
+    var list=Engine.getTechnicians();
+    container.innerHTML='<div>'+
+      '<div class="page-title-bar"><span class="page-title-icon">💅</span><span class="page-title-text">技师档案</span></div>'+
+      '<div class="form-subtitle">不同技师可设置不同项目提成比例</div>'+
+      '<div class="form-card">'+
+        '<div class="form-row">'+
+          '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">技师姓名 *</label>'+
+            '<input id="t-name" class="form-inp" type="text" placeholder="小王"></div>'+
+          '<div style="display:flex;gap:8px;flex:1">'+
+            '<div class="form-group half" style="margin-bottom:0;flex:1"><label class="form-lbl">美睫提成%</label>'+
+              '<input id="t-lash" class="form-inp" type="number" min="0" max="100" step="0.5" placeholder="30"></div>'+
+            '<div class="form-group half" style="margin-bottom:0;flex:1"><label class="form-lbl">美甲提成%</label>'+
+              '<input id="t-nail" class="form-inp" type="number" min="0" max="100" step="0.5" placeholder="25"></div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="height:12px"></div>'+
+        '<button class="form-submit" onclick="tSubmit()">💅 添加技师</button>'+
+        '<div class="form-success hidden" id="t-succ">✅ 技师已添加！</div>'+
+      '</div>'+
+      '<div class="section-label">技师团队（'+list.length+'人）</div>'+
+      '<div class="tech-list">'+
+        (list.length
+          ?list.map(function(t,i){ return '<div class="tech-card">'+
+              '<div class="tech-avatar">'+AVATARS[i%AVATARS.length]+'</div>'+
+              '<div class="tech-info"><div class="tech-name">'+t.name+'</div>'+
+                '<div class="tech-rates">美睫提成 '+t.lashRate+'% · 美甲提成 '+t.nailRate+'%</div></div>'+
+              '<button class="tech-del" onclick="tDel(\''+t.id+'\')">🗑</button>'+
+            '</div>'; }).join('')
+          :'<div style="text-align:center;color:var(--text-3);padding:32px;font-size:14px">暂无技师档案</div>'
+        )+
+      '</div>'+
+    '</div>';
 
-function renderStockPicker() {
-  const p = document.getElementById('stockPicker');
-  p.innerHTML = '<option value="">选择耗材...</option>' +
-    materials.map((m,i)=>`<option value="${i}">${m.name} (¥${(m.price/m.usage).toFixed(2)}/次)</option>`).join('');
-}
-
-// ═══════════════════════════════════════════
-//  技师
-// ═══════════════════════════════════════════
-function addTechnician() {
-  const name = document.getElementById('techName').value.trim();
-  const lr   = parseFloat(document.getElementById('techLashRate').value)||0;
-  const nr   = parseFloat(document.getElementById('techNailRate').value)||0;
-  if(!name){ showToast('请填写技师姓名'); return; }
-  technicians.push({name, lashRate:lr, nailRate:nr});
-  localStorage.setItem('ot_technicians', JSON.stringify(technicians));
-  document.getElementById('techName').value='';
-  document.getElementById('techLashRate').value='';
-  document.getElementById('techNailRate').value='';
-  renderTechnicians(); renderTechSelect();
-  showToast('技师已添加 ✓');
-}
-
-function renderTechnicians() {
-  const el = document.getElementById('techList');
-  if(!technicians.length){
-    el.innerHTML='<div class="empty-state"><div class="empty-icon">💅</div>暂无技师，先添加技师档案</div>';
-    return;
+    window.tSubmit=function(){
+      var name=container.querySelector('#t-name').value.trim();
+      var lr=parseFloat(container.querySelector('#t-lash').value)||0;
+      var nr=parseFloat(container.querySelector('#t-nail').value)||0;
+      if(!name) return shake(container.querySelector('#t-name'),'请填写技师姓名');
+      Engine.addTechnician({ name:name, lashRate:lr, nailRate:nr }); draw();
+    };
+    window.tDel=function(id){
+      if(!confirm('确定删除？')) return; Engine.deleteTechnician(id); draw();
+    };
   }
-  el.innerHTML = technicians.map((t,i)=>`
-    <div class="tech-item">
-      <div class="tech-name">${t.name}</div>
-      <div class="tech-rate">美睫 ${t.lashRate}% &nbsp;·&nbsp; 美甲 ${t.nailRate}%</div>
-      <button class="del-btn" onclick="deleteTech(${i})">×</button>
-    </div>`).join('');
+  draw();
 }
 
-function deleteTech(i) {
-  technicians.splice(i,1);
-  localStorage.setItem('ot_technicians', JSON.stringify(technicians));
-  renderTechnicians(); renderTechSelect();
-}
-
-function renderTechSelect() {
-  const s = document.getElementById('techSelect');
-  s.innerHTML = '<option value="">选择技师</option>' +
-    technicians.map((t,i)=>`<option value="${i}">${t.name}</option>`).join('');
-}
-
-// ═══════════════════════════════════════════
-//  TOAST
-// ═══════════════════════════════════════════
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2000);
-}
+// ── 初始化 ────────────────────────────────────────────────────────
+document.getElementById('view-calendar').style.display='';
+updateHeader();
+buildSnake();
+setTimeout(function(){
+  var node=document.querySelector('.n-today');
+  if(node) node.scrollIntoView({ behavior:'smooth', block:'center' });
+},600);
 </script>
 </body>
 </html>
