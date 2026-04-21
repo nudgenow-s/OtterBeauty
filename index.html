@@ -818,11 +818,18 @@ function openChest(){
   var s=Engine.getMonthStats(YEAR,MONTH);
   var acq=Engine.getAcquireSummary();
   var inv=Engine.getInventorySummary();
+  var monthAcq=Engine.getAcquire().reduce(function(a,item){
+    var d=new Date(item.createdAt);
+    if(d.getFullYear()===YEAR&&d.getMonth()===MONTH) a+=parseFloat(item.amount)||0;
+    return a;
+  },0);
+  var netProfit=s.profit-monthAcq;
   alert('💅 '+(MONTH+1)+'月月度总结\n\n接单天数：'+s.days+' 天\n本月营收：'+Engine.fmtMoney(s.revenue)+
     '\n本月毛利：'+Engine.fmtMoney(s.profit)+'\n平均毛利率：'+Engine.fmtMargin(s.gm)+
-    '\n\n📣 获客总投入：'+Engine.fmtMoney(acq.total)+
+    '\n\n📣 本月获客投入：'+Engine.fmtMoney(monthAcq)+
+    '\n💰 月净利润（扣获客后）：'+Engine.fmtMoney(netProfit)+
     '\n\n🧴 库存进货价值：'+Engine.fmtMoney(inv.purchaseTotal)+
-    '\n💰 库存可销售价值：'+Engine.fmtMoney(inv.resaleTotal));
+    '\n📦 库存可销售价值：'+Engine.fmtMoney(inv.resaleTotal));
 }
 
 function shake(el,msg){
