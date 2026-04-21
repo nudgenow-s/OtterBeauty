@@ -477,12 +477,20 @@ var Engine = (function(){
       var totalPrice=parseFloat(m.totalPrice)||0; // FIX1: 用单瓶/盒进价
       // 库存进货价值 = 单瓶/盒进价 × 当前库存数量（整瓶）
       // 再加上：当前瓶内已用次数对应的剩余价值
-      var bottleValue = stock * totalPrice;
-      // 瓶内剩余价值：(usageCount - 已用次数余数) / usageCount × totalPrice
-      var usageCount = parseFloat(m.usageCount)||1;
+    // 新代码（正确）
+      var usageCount = parseFloat(m.usageCount) || 1;
+      var unitCost = totalPrice / usageCount;
       var usedRemainder = uc[m.id] || 0;
-      var remainingInBottle = usedRemainder > 0 ? ((usageCount - usedRemainder) / usageCount * totalPrice) : 0;
-      purchaseTotal += bottleValue + remainingInBottle;
+      var stockValue;
+      if (usedRemainder > 0) {
+  // 有已开瓶：(库存数-1)整瓶 + 当前瓶剩余价值
+         stockValue = (stock - 1) * totalPrice + (totalPrice - unitCost * usedRemainder);
+     } else {
+  // 未开瓶：全部整瓶
+         stockValue = stock * totalPrice;
+     }
+      purchaseTotal += stockValue;
+
       if(m.isProduct){ resaleTotal+=stock*(parseFloat(m.salePrice)||0); productCount++; }
     });
     return { purchaseTotal:purchaseTotal, resaleTotal:resaleTotal, productCount:productCount, total:mats.length };
@@ -645,9 +653,14 @@ var Engine = (function(){
     var stock = parseFloat(mat.stock)||0;
     var usedRemainder = uc[matId] || 0;
     // 整瓶价值 + 当前瓶内剩余价值
-    var bottleValue = stock * totalPrice;
-    var inBottleValue = usedRemainder > 0 ? ((usageCount - usedRemainder) / usageCount * totalPrice) : 0;
-    return bottleValue + inBottleValue;
+    // 新代码
+    var unitCost = totalPrice / usageCount;
+    if (usedRemainder > 0) {
+      return (stock - 1) * totalPrice + (totalPrice - unitCost * usedRemainder);
+    } else {
+      return stock * totalPrice;
+    }
+
   }
 
   return {
@@ -1528,7 +1541,11 @@ function renderMaterials(container){
             var usageCount=parseFloat(m.usageCount)||1;
             var totalPrice=parseFloat(m.totalPrice)||0;
             // FIX1: 卡片显示库存价值 = 单瓶进价 × 整瓶库存 + 瓶内剩余价值
-            var stockValue = s*totalPrice + (usedInBottle>0?((usageCount-usedInBottle)/usageCount*totalPrice):0);
+            var unitCost = totalPrice / usageCount;
+            var stockValue = usedInBottle > 0
+                ? (s - 1) * totalPrice + (totalPrice - unitCost * usedInBottle)
+                : s * totalPrice;
+
             // FIX2: 显示已用次数/总次数
             var bottleInfo = usedInBottle>0?(' 本瓶已用'+usedInBottle+'/'+usageCount+'次'):'';
             return '<div class="mat-card">'+
