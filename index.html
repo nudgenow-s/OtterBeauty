@@ -411,9 +411,26 @@ var Engine = (function(){
     history:'beauty_h', materials:'beauty_m', technicians:'beauty_t',
     orders:'beauty_o', acquire:'beauty_acq', products:'beauty_products',
     productOrders:'beauty_po',
-    // FIX2: 记录每种耗材已累计使用次数（不足一瓶不扣库存）
-    usageCounts:'beauty_uc'
+    usageCounts:'beauty_uc',
+    matCategories:'beauty_matcats'  // 自定义耗材分类
   };
+
+  // 默认分类
+  var DEFAULT_CATS = ['美睫耗材','美甲耗材','美容耗材','纹绣耗材','医美耗材','通用辅材','可零售产品'];
+
+  function getMatCategories(){
+    return load(KEYS.matCategories) || DEFAULT_CATS.slice();
+  }
+  function saveMatCategories(cats){ save(KEYS.matCategories, cats); }
+  function addMatCategory(name){
+    var cats = getMatCategories();
+    if(cats.indexOf(name) >= 0) return cats;
+    cats.push(name); saveMatCategories(cats); return cats;
+  }
+  function deleteMatCategory(name){
+    var cats = getMatCategories().filter(function(c){ return c !== name; });
+    saveMatCategories(cats); return cats;
+  }
   function load(k){ try{ return JSON.parse(localStorage.getItem(k))||null; }catch(e){ return null; } }
   function save(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
 
@@ -483,12 +500,12 @@ var Engine = (function(){
       var usedRemainder = uc[m.id] || 0;
       var stockValue;
       if (usedRemainder > 0) {
-  // 有已开瓶：(库存数-1)整瓶 + 当前瓶剩余价值
-         stockValue = (stock - 1) * totalPrice + (totalPrice - unitCost * usedRemainder);
-     } else {
-  // 未开瓶：全部整瓶
-         stockValue = stock * totalPrice;
-     }
+      // 有已开瓶：(库存数-1)整瓶 + 当前瓶剩余价值
+          stockValue = (stock - 1) * totalPrice + (totalPrice - unitCost * usedRemainder);
+      } else {
+     // 未开瓶：全部整瓶
+          stockValue = stock * totalPrice;
+      }
       purchaseTotal += stockValue;
 
       if(m.isProduct){ resaleTotal+=stock*(parseFloat(m.salePrice)||0); productCount++; }
@@ -590,21 +607,38 @@ var Engine = (function(){
     });
     return Object.values(map).sort(function(a,b){ return b.count-a.count; });
   }
-  function getMarginRanking(){
+  // 毛利价值榜：按总毛利金额排序
+  function getProfitRanking(){
     var map={};
+    var typeLabel={ lash:'美睫', nail:'美甲', beauty:'美容', tattoo:'纹绣', medical:'医美' };
     getOrders().forEach(function(o){
-      if(!map[o.projectName]) map[o.projectName]={ name:o.projectName, type:o.projectType, totalMargin:0, count:0 };
-      map[o.projectName].totalMargin+=o.grossMargin; map[o.projectName].count++;
+      if(!map[o.projectName]) map[o.projectName]={ name:o.projectName, type:o.projectType, typeLabel:typeLabel[o.projectType]||o.projectType, count:0, revenue:0, profit:0 };
+      map[o.projectName].count++; map[o.projectName].revenue+=o.facePrice; map[o.projectName].profit+=o.grossProfit;
     });
-    return Object.values(map).map(function(p){ return Object.assign({},p,{ avgMargin:p.totalMargin/p.count }); }) // FIX3: 保留小数
-      .sort(function(a,b){ return b.avgMargin-a.avgMargin; });
+    return Object.values(map).sort(function(a,b){ return b.profit-a.profit; });
   }
-  function getTechRanking(){
+  // 技师提成榜：按累计提成金额排序
+  function getTechCommissionRanking(){
     var map={};
     getOrders().forEach(function(o){
       if(!o.techName) return;
-      if(!map[o.techName]) map[o.techName]={ name:o.techName, count:0, revenue:0, profit:0 };
-      map[o.techName].count++; map[o.techName].revenue+=o.facePrice; map[o.techName].profit+=o.grossProfit;
+      if(!map[o.techName]) map[o.techName]={ name:o.techName, count:0, revenue:0, commission:0, profit:0 };
+      map[o.techName].count++;
+      map[o.techName].revenue+=o.facePrice;
+      map[o.techName].commission+=o.techCost||0;
+      map[o.techName].profit+=o.grossProfit;
+    });
+    return Object.values(map).sort(function(a,b){ return b.commission-a.commission; });
+  }
+  // 渠道榜：按渠道统计单数/营收/毛利
+  function getChannelRanking(){
+    var map={};
+    var chLabel={ offline:'到店自然客', meituan:'美团团购', douyin:'抖音团购' };
+    var chEmoji={ offline:'🚶', meituan:'🥡', douyin:'🎵' };
+    getOrders().forEach(function(o){
+      var ch=o.channel||'offline';
+      if(!map[ch]) map[ch]={ name:chLabel[ch]||ch, emoji:chEmoji[ch]||'📍', channel:ch, count:0, revenue:0, profit:0 };
+      map[ch].count++; map[ch].revenue+=o.facePrice; map[ch].profit+=o.grossProfit;
     });
     return Object.values(map).sort(function(a,b){ return b.revenue-a.revenue; });
   }
@@ -653,7 +687,7 @@ var Engine = (function(){
     var stock = parseFloat(mat.stock)||0;
     var usedRemainder = uc[matId] || 0;
     // 整瓶价值 + 当前瓶内剩余价值
-    // 新代码
+  // 新代码
     var unitCost = totalPrice / usageCount;
     if (usedRemainder > 0) {
       return (stock - 1) * totalPrice + (totalPrice - unitCost * usedRemainder);
@@ -667,11 +701,12 @@ var Engine = (function(){
     getDay, setDay,
     getMaterials, addMaterial, deleteMaterial, updateMaterialStock, getInventorySummary,
     consumeMatByUsage, getUsageCounts, getMatRemainingValue,
+    getMatCategories, addMatCategory, deleteMatCategory,
     getTechnicians, addTechnician, deleteTechnician,
     getOrders, recordOrder,
     getProductOrders, recordProductOrder,
     getAcquire, addAcquire, deleteAcquire, getAcquireSummary,
-    getProjectRanking, getMarginRanking, getTechRanking,
+    getProjectRanking, getProfitRanking, getTechCommissionRanking, getChannelRanking,
     getMonthStats, getStreak, fmtMoney, fmtMargin
   };
 })();
@@ -815,7 +850,7 @@ function shake(el,msg){
 // ══════════════════════════════════════════════════════════════════
 function renderNewOrder(container){
   var mats=Engine.getMaterials(), techs=Engine.getTechnicians();
-  // FIX4: 耗材按类别分组
+  // FIX4: 耗材按类别分组（动态读取自定义类别）
   var matCategories = {};
   mats.forEach(function(m){
     var cat = m.category || '未分类';
@@ -1393,11 +1428,12 @@ function renderOrders(container){
 }
 
 // ══════════════════════════════════════════════════════════════════
-//  排行榜（FIX3: 毛利率保留小数）
+//  排行榜：接单量 / 毛利价值 / 技师提成 / 销售渠道
 // ══════════════════════════════════════════════════════════════════
 function renderRanking(container){
   var medals=['🥇','🥈','🥉'];
   var BAR=['#FF6B9D','#9B6DFF','#4CAF50','#F5A623','#2196F3'];
+
   function card(item,i,val,max,valLabel,subLabel,valColor){
     var pct=max>0?Math.max(4,Math.round(val/max*100)):4;
     var medal=i<3?medals[i]:'<span class="rank-num">'+(i+1)+'</span>';
@@ -1413,56 +1449,109 @@ function renderRanking(container){
     '</div>';
   }
 
-  var cData=Engine.getProjectRanking(), cMax=cData.length?cData[0].count:1;
-  var mData=Engine.getMarginRanking(),  mMax=mData.length?mData[0].avgMargin:1;
-  var tData=Engine.getTechRanking(),    tMax=tData.length?tData[0].revenue:1;
+  var cData=Engine.getProjectRanking(),        cMax=cData.length?cData[0].count:1;
+  var pData=Engine.getProfitRanking(),          pMax=pData.length?Math.max(pData[0].profit,1):1;
+  var tData=Engine.getTechCommissionRanking(),  tMax=tData.length?tData[0].commission:1;
+  var chData=Engine.getChannelRanking(),        chMax=chData.length?chData[0].revenue:1;
 
   container.innerHTML='<div>'+
     '<div class="page-title-bar"><span class="page-title-icon">📊</span><span class="page-title-text">项目排行</span></div>'+
     '<div class="rank-tab-row">'+
       '<button class="rank-tab active" onclick="rankTab(\'count\',this)">接单量</button>'+
-      '<button class="rank-tab" onclick="rankTab(\'margin\',this)">毛利率</button>'+
-      '<button class="rank-tab" onclick="rankTab(\'tech\',this)">技师业绩</button>'+
+      '<button class="rank-tab" onclick="rankTab(\'profit\',this)">毛利价值</button>'+
+      '<button class="rank-tab" onclick="rankTab(\'tech\',this)">技师提成</button>'+
+      '<button class="rank-tab" onclick="rankTab(\'channel\',this)">销售渠道</button>'+
     '</div>'+
+
+    // 接单量榜
     '<div id="rank-count">'+
-      (cData.length?'<div class="rank-subtitle">开业以来各项目累计接单数量</div>'+cData.map(function(item,i){ return card(item,i,item.count,cMax,item.count+'单',Engine.fmtMoney(item.revenue)+'营收'); }).join(''):'<div class="rank-empty">还没有订单，快去接单吧！</div>')+
+      (cData.length
+        ?'<div class="rank-subtitle">累计接单数量榜</div>'+
+          cData.map(function(item,i){
+            return card(item,i,item.count,cMax,item.count+'单',Engine.fmtMoney(item.revenue)+' 营收');
+          }).join('')
+        :'<div class="rank-empty">还没有订单，快去接单吧！</div>')+
     '</div>'+
-    '<div id="rank-margin" style="display:none">'+
-      (mData.length?'<div class="rank-subtitle">各项目平均毛利率</div>'+mData.map(function(item,i){
-        var col=item.avgMargin>=50?'var(--green)':item.avgMargin>=30?'var(--gold)':'var(--red)';
-        return card(item,i,item.avgMargin,mMax,Engine.fmtMargin(item.avgMargin),item.count+'单均值',col); // FIX3
-      }).join(''):'<div class="rank-empty">暂无数据</div>')+
+
+    // 毛利价值榜
+    '<div id="rank-profit" style="display:none">'+
+      (pData.length
+        ?'<div class="rank-subtitle">各项目累计毛利金额</div>'+
+          pData.map(function(item,i){
+            var col=item.profit>=0?'var(--green)':'var(--red)';
+            return card(item,i,Math.max(item.profit,0),pMax,
+              Engine.fmtMoney(item.profit),
+              item.count+'单 · 营收'+Engine.fmtMoney(item.revenue),col);
+          }).join('')
+        :'<div class="rank-empty">暂无数据</div>')+
     '</div>'+
+
+    // 技师提成榜
     '<div id="rank-tech" style="display:none">'+
-      (tData.length?'<div class="rank-subtitle">技师累计服务营收</div>'+tData.map(function(item,i){
-        return card({name:item.name},i,item.revenue,tMax,Engine.fmtMoney(item.revenue),item.count+'单 · 毛利'+Engine.fmtMoney(item.profit),'var(--purple)');
-      }).join(''):'<div class="rank-empty">暂无技师业绩数据</div>')+
+      (tData.length
+        ?'<div class="rank-subtitle">技师累计提成金额</div>'+
+          tData.map(function(item,i){
+            return card({name:item.name},i,item.commission,tMax,
+              Engine.fmtMoney(item.commission),
+              item.count+'单 · 创收'+Engine.fmtMoney(item.revenue),
+              'var(--purple)');
+          }).join('')
+        :'<div class="rank-empty">暂无技师提成数据</div>')+
     '</div>'+
+
+    // 销售渠道榜
+    '<div id="rank-channel" style="display:none">'+
+      (chData.length
+        ?'<div class="rank-subtitle">各渠道累计营收与单量</div>'+
+          chData.map(function(item,i){
+            var col='var(--teal)';
+            return '<div class="rank-card '+(i<3?'rank-top-'+(i+1):'')+'">'+
+              '<div class="rc-medal" style="font-size:32px">'+item.emoji+'</div>'+
+              '<div class="rc-body">'+
+                '<div class="rc-name">'+item.name+'</div>'+
+                '<div class="rc-bar-wrap"><div class="rc-bar" style="width:'+Math.max(4,Math.round(item.revenue/chMax*100))+'%;background:'+BAR[Math.min(i,4)]+'"></div></div>'+
+                '<div class="rc-sub">'+item.count+'单 · 毛利'+Engine.fmtMoney(item.profit)+'</div>'+
+              '</div>'+
+              '<div style="text-align:right;min-width:72px">'+
+                '<div style="font-size:16px;font-weight:900;color:var(--teal)">'+Engine.fmtMoney(item.revenue)+'</div>'+
+                '<div style="font-size:11px;color:var(--text-3);font-weight:700;margin-top:2px">'+
+                  (item.revenue>0?Engine.fmtMargin(item.profit/item.revenue*100)+' 毛利率':'—')+
+                '</div>'+
+              '</div>'+
+            '</div>';
+          }).join('')
+        :'<div class="rank-empty">暂无渠道数据</div>')+
+    '</div>'+
+
   '</div>';
 
   window.rankTab=function(tab,btn){
     container.querySelectorAll('.rank-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active');
-    ['count','margin','tech'].forEach(function(t){
+    ['count','profit','tech','channel'].forEach(function(t){
       container.querySelector('#rank-'+t).style.display=t===tab?'':'none';
     });
   };
 }
 
 // ══════════════════════════════════════════════════════════════════
-//  耗材/产品库（FIX1: 库存价值 = 单瓶/盒进价 × 库存数量）
+//  耗材/产品库（含自定义类别管理）
 // ══════════════════════════════════════════════════════════════════
 function renderMaterials(container){
   function draw(){
     var mats=Engine.getMaterials();
-    var inv=Engine.getInventorySummary(); // FIX1已在Engine修正
+    var inv=Engine.getInventorySummary();
     var uc=Engine.getUsageCounts();
+    var cats=Engine.getMatCategories();
     var onlyMats=mats.filter(function(m){ return !m.isProduct; });
     var onlyProds=mats.filter(function(m){ return m.isProduct; });
+
+    // 类别选项 HTML（供 <select> 用）
+    var catOptionsHtml=cats.map(function(c){ return '<option>'+c+'</option>'; }).join('');
 
     container.innerHTML='<div>'+
       '<div class="page-title-bar"><span class="page-title-icon">🧴</span><span class="page-title-text">库存管理</span></div>'+
 
-      // FIX1: 库存进货价值 = 单瓶/盒进价 × 当前库存数量
+      // 库存价值汇总
       '<div class="inv-summary-grid">'+
         '<div class="inv-sum-card purchase">'+
           '<div class="inv-sum-lbl">📦 库存进货价值</div>'+
@@ -1476,22 +1565,37 @@ function renderMaterials(container){
         '</div>'+
       '</div>'+
 
-      // 添加表单
+      // ── 类别管理卡片 ──
+      '<div class="form-card">'+
+        '<div class="section-label">耗材分类管理</div>'+
+        '<div style="font-size:12px;color:var(--text-3);font-weight:700;margin-bottom:10px">点击标签上的 × 可删除，未被使用的类别才能删除</div>'+
+        '<div id="cat-chips-wrap" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">'+
+          cats.map(function(c){
+            var inUse=mats.some(function(m){ return m.category===c; });
+            return '<span style="display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:20px;border:2px solid var(--border);background:#fff;font-size:12px;font-weight:800;color:var(--text-2)">'+
+              c+
+              '<button onclick="catDel(\''+c+'\')" style="background:none;border:none;cursor:'+(inUse?'not-allowed':'pointer')+';font-size:13px;color:'+(inUse?'#CCC':'var(--red)')+';padding:0;line-height:1" title="'+(inUse?'该类别有耗材，无法删除':'删除')+'">×</button>'+
+            '</span>';
+          }).join('')+
+        '</div>'+
+        '<div style="display:flex;gap:8px">'+
+          '<input id="new-cat-inp" class="form-inp" type="text" placeholder="输入新类别名称…" style="flex:1">'+
+          '<button onclick="catAdd()" style="padding:10px 16px;background:var(--pink);color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:900;cursor:pointer;white-space:nowrap;font-family:inherit">＋ 添加</button>'+
+        '</div>'+
+        '<div class="form-success hidden" id="cat-succ">✅ 类别已更新！</div>'+
+      '</div>'+
+
+      // 添加耗材/产品表单
       '<div class="form-card">'+
         '<div class="section-label">添加耗材 / 产品</div>'+
         '<div class="form-row">'+
           '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">名称 *</label>'+
             '<input id="m-name" class="form-inp" type="text" placeholder="如：玻尿酸原液"></div>'+
           '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">类别</label>'+
-            '<select id="m-cat" class="form-inp">'+
-              '<option>美睫耗材</option><option>美甲耗材</option><option>美容耗材</option>'+
-              '<option>纹绣耗材</option><option>医美耗材</option><option>通用辅材</option>'+
-              '<option>可零售产品</option>'+
-            '</select></div>'+
+            '<select id="m-cat" class="form-inp">'+catOptionsHtml+'</select></div>'+
         '</div>'+
         '<div style="height:10px"></div>'+
         '<div class="form-row">'+
-          // FIX1: 字段说明明确为"单瓶/盒总价"
           '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">单瓶/盒进价 (¥) *</label>'+
             '<input id="m-price" class="form-inp" type="number" step="0.01" min="0" placeholder="80" oninput="mPreview()"></div>'+
           '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">可用次数 *</label>'+
@@ -1503,7 +1607,6 @@ function renderMaterials(container){
           '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">单位</label>'+
             '<input id="m-unit" class="form-inp" type="text" placeholder="瓶/盒/支/ml…"></div>'+
         '</div>'+
-        // 可零售选项
         '<div style="margin-top:12px;display:flex;align-items:center;gap:10px">'+
           '<input type="checkbox" id="m-is-product" style="width:18px;height:18px;accent-color:var(--green)" onchange="mProdToggle()">'+
           '<label for="m-is-product" style="font-size:14px;font-weight:800;color:var(--text)">✅ 这是可零售产品</label>'+
@@ -1515,7 +1618,6 @@ function renderMaterials(container){
             '<span class="mp-label">产品毛利率</span><span class="mp-unit" id="m-prod-margin">—</span>'+
           '</div>'+
         '</div>'+
-        // FIX2: 预览中显示单次成本 = 单瓶进价 ÷ 次数
         '<div class="margin-preview hidden" id="m-prev" style="margin-top:10px">'+
           '<span class="mp-label">单次成本</span><span class="mp-unit" id="m-uc">¥—</span>'+
           '<span style="font-size:12px;color:var(--text-3);font-weight:700" id="m-note"></span>'+
@@ -1526,7 +1628,7 @@ function renderMaterials(container){
         '<div class="form-success hidden" id="m-succ">✅ 已添加！</div>'+
       '</div>'+
 
-      // 耗材列表tab
+      // 耗材 / 产品 Tab
       '<div class="rank-tab-row" id="mat-tab-row" style="margin-top:4px">'+
         '<button class="rank-tab active" onclick="matTabSwitch(\'mat\',this)">🧴 耗材 ('+onlyMats.length+')</button>'+
         '<button class="rank-tab" onclick="matTabSwitch(\'prod\',this)">🛍 产品 ('+onlyProds.length+')</button>'+
@@ -1540,14 +1642,13 @@ function renderMaterials(container){
             var usedInBottle=uc[m.id]||0;
             var usageCount=parseFloat(m.usageCount)||1;
             var totalPrice=parseFloat(m.totalPrice)||0;
-            // FIX1: 卡片显示库存价值 = 单瓶进价 × 整瓶库存 + 瓶内剩余价值
+            var unitCost=totalPrice/usageCount;
             var unitCost = totalPrice / usageCount;
             var stockValue = usedInBottle > 0
-                ? (s - 1) * totalPrice + (totalPrice - unitCost * usedInBottle)
-                : s * totalPrice;
+               ? (s - 1) * totalPrice + (totalPrice - unitCost * usedInBottle)
+               : s * totalPrice;
 
-            // FIX2: 显示已用次数/总次数
-            var bottleInfo = usedInBottle>0?(' 本瓶已用'+usedInBottle+'/'+usageCount+'次'):'';
+            var bottleInfo=usedInBottle>0?(' 本瓶已用'+usedInBottle+'/'+usageCount+'次'):'';
             return '<div class="mat-card">'+
               '<button class="mat-del" onclick="mDel(\''+m.id+'\')">✕</button>'+
               '<div class="mat-name">'+m.name+'</div>'+
@@ -1568,8 +1669,7 @@ function renderMaterials(container){
           '<div class="mat-grid">'+onlyProds.map(function(m){
             var s=parseFloat(m.stock)||0, sc=s>5?'stock-ok':s>0?'stock-low':'stock-out';
             var totalPrice=parseFloat(m.totalPrice)||0;
-            // FIX1: 产品库存价值 = 单瓶进价 × 库存数量
-            var stockValue = s*totalPrice;
+            var stockValue=s*totalPrice;
             var margin=m.salePrice&&totalPrice?((m.salePrice-totalPrice)/m.salePrice*100):null;
             return '<div class="mat-card">'+
               '<button class="mat-del" onclick="mDel(\''+m.id+'\')">✕</button>'+
@@ -1587,6 +1687,23 @@ function renderMaterials(container){
       '</div>'+
 
     '</div>';
+
+    // ── 类别管理事件 ──
+    window.catAdd=function(){
+      var inp=container.querySelector('#new-cat-inp');
+      var name=inp.value.trim();
+      if(!name) return shake(inp,'请输入类别名称');
+      Engine.addMatCategory(name);
+      inp.value='';
+      var s=container.querySelector('#cat-succ'); s.classList.remove('hidden'); setTimeout(function(){ s.classList.add('hidden'); },1500);
+      draw();
+    };
+    window.catDel=function(name){
+      var inUse=Engine.getMaterials().some(function(m){ return m.category===name; });
+      if(inUse){ alert('该类别下还有耗材，请先删除或更改耗材类别后再删除此类别'); return; }
+      if(!confirm('确定删除「'+name+'」分类？')) return;
+      Engine.deleteMatCategory(name); draw();
+    };
 
     window.matTabSwitch=function(tab,btn){
       container.querySelectorAll('#mat-tab-row .rank-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active');
@@ -1607,18 +1724,15 @@ function renderMaterials(container){
         pv.classList.remove('hidden');
         container.querySelector('#m-uc').textContent='¥'+(p/u).toFixed(2)+' / 次';
         container.querySelector('#m-note').textContent='¥'+p+' ÷ '+u+'次';
-        // FIX1: 预览库存价值 = 单瓶进价 × 库存数量
         var sv=container.querySelector('#m-stock-value');
         if(sv&&st>0) sv.textContent='  库存价值: ¥'+(p*st).toFixed(2);
         else if(sv) sv.textContent='';
       } else pv.classList.add('hidden');
-      // 产品毛利率预览
       var isProd=container.querySelector('#m-is-product').checked;
       var spEl=container.querySelector('#m-sale-price');
       var ppEl=container.querySelector('#m-profit-prev');
       if(isProd&&p>0&&u>0&&spEl){
         var sp=parseFloat(spEl.value)||0;
-        // 产品按整瓶计算，进价=单瓶价，售价为零售价
         if(sp>p&&sp>0){
           ppEl.classList.remove('hidden');
           container.querySelector('#m-prod-margin').textContent=Engine.fmtMargin((sp-p)/sp*100);
