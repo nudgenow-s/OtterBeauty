@@ -557,7 +557,7 @@ var Engine = (function(){
   function getProductOrders()  { return load(KEYS.productOrders)||[]; }
   function recordProductOrder(o){
     var list=getProductOrders();
-    o.id=Date.now(); o.createdAt=new Date().toISOString();
+    o.id=Date.now()+Math.random(); o.createdAt=new Date().toISOString();
     o.date=new Date().toLocaleDateString();
     // 成本合计（销售和赠品都计算）
     o.costTotal=o.items.reduce(function(a,i){ return a+(parseFloat(i.unitCost)||0)*i.qty; },0);
@@ -1505,12 +1505,12 @@ function renderOrders(container){
           '</div>'+
           '<div class="oc-costs">'+
             (isSale?
-              '<div class="oc-cost-item"><div class="oc-cost-lbl">销售额</div><div class="oc-cost-val">¥'+o.totalAmount.toFixed(2)+'</div></div>'+
-              '<div class="oc-cost-item"><div class="oc-cost-lbl">产品成本</div><div class="oc-cost-val">¥'+o.costTotal.toFixed(2)+'</div></div>'+
-              '<div class="oc-cost-item"><div class="oc-cost-lbl">毛利</div><div class="oc-cost-val" style="color:var(--green)">¥'+o.grossProfit.toFixed(2)+'</div></div>'
+              '<div class="oc-cost-item"><div class="oc-cost-lbl">销售额</div><div class="oc-cost-val">¥'+(parseFloat(o.totalAmount)||0).toFixed(2)+'</div></div>'+
+              '<div class="oc-cost-item"><div class="oc-cost-lbl">产品成本</div><div class="oc-cost-val">¥'+(parseFloat(o.costTotal)||0).toFixed(2)+'</div></div>'+
+              '<div class="oc-cost-item"><div class="oc-cost-lbl">毛利</div><div class="oc-cost-val" style="color:var(--green)">¥'+(parseFloat(o.grossProfit)||0).toFixed(2)+'</div></div>'
               :
-              '<div class="oc-cost-item"><div class="oc-cost-lbl">赠品成本</div><div class="oc-cost-val" style="color:var(--gold)">¥'+o.costTotal.toFixed(2)+'</div></div>'+
-              '<div class="oc-cost-item"><div class="oc-cost-lbl">成本损耗</div><div class="oc-cost-val" style="color:var(--red)">-¥'+o.costTotal.toFixed(2)+'</div></div>'
+              '<div class="oc-cost-item"><div class="oc-cost-lbl">赠品成本</div><div class="oc-cost-val" style="color:var(--gold)">¥'+(parseFloat(o.costTotal)||0).toFixed(2)+'</div></div>'+
+              '<div class="oc-cost-item"><div class="oc-cost-lbl">成本损耗</div><div class="oc-cost-val" style="color:var(--red)">-¥'+(parseFloat(o.costTotal)||0).toFixed(2)+'</div></div>'
             )+
           '</div>'+
         '</div>';
