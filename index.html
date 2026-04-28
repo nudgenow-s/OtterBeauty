@@ -1823,9 +1823,7 @@ function renderMaterials(container){
       '</div>'+
     '</div>';
 
-    window.catAdd=function(){
-
-    // ── 💡 Tip 数据 & 交互 ──
+    // ── 💡 Tip 数据 & 交互（必须在 innerHTML 之后、事件绑定之前挂载）──
     var TIP_DATA = {
       nail: [
         { name:'底胶 15ml',         val:'300–350次' },
@@ -1835,7 +1833,7 @@ function renderMaterials(container){
         { name:'酒精/清洁液 500ml',  val:'400–600次' },
         { name:'砂条/锉条（盒装）',  val:'50–80次/支' },
         { name:'甲油胶延长液 30ml',  val:'80–100次' },
-        { name:'光疗树脂 10g',        val:'60–80次' },
+        { name:'光疗树脂 10g',       val:'60–80次' },
         { name:'钻饰/贴纸（包）',    val:'30–50次' },
       ],
       lash: [
@@ -1855,50 +1853,35 @@ function renderMaterials(container){
         { name:'面膜（箱/30片）',       val:'30次' },
         { name:'按摩霜/膏 500ml',       val:'100–150次' },
         { name:'导入营养液 100ml',      val:'80–120次' },
-        { name:'清洁凝胶/洁面 200ml',   val:'60–80次' },
-        { name:'纳米微针（盒/10片）',   val:'10次' },
-        { name:'超声波耦合剂 500ml',    val:'150–200次' },
+        { name:'清洁凝胶/洁面 200ml',  val:'60–80次' },
+        { name:'纳米微针（盒/10片）',  val:'10次' },
+        { name:'超声波耦合剂 500ml',   val:'150–200次' },
         { name:'酒精棉片（包/100片）', val:'100次' },
       ],
       tattoo: [
-        { name:'纹绣色料（瓶/5ml）',   val:'40–60次' },
-        { name:'麻药膏 10g',            val:'15–20次' },
-        { name:'定妆液 30ml',           val:'80–100次' },
-        { name:'纹绣针头（盒/20支）',  val:'20次（一次性）' },
-        { name:'纹绣纸巾/棉签（包）',  val:'50–80次' },
-        { name:'保鲜膜（卷）',          val:'200–300次' },
-        { name:'修复霜 15g',            val:'30–50次' },
-        { name:'隐形眉卡（套）',        val:'长期使用' },
+        { name:'纹绣色料（瓶/5ml）',  val:'40–60次' },
+        { name:'麻药膏 10g',           val:'15–20次' },
+        { name:'定妆液 30ml',          val:'80–100次' },
+        { name:'纹绣针头（盒/20支）', val:'20次（一次性）' },
+        { name:'纹绣纸巾/棉签（包）', val:'50–80次' },
+        { name:'保鲜膜（卷）',         val:'200–300次' },
+        { name:'修复霜 15g',           val:'30–50次' },
+        { name:'隐形眉卡（套）',       val:'长期使用' },
       ],
       medical: [
-        { name:'水光针液 2ml/支',       val:'1次（一次性）' },
-        { name:'肉毒素（瓶/100u）',     val:'4–6次（按部位）' },
-        { name:'填充剂/玻尿酸 1ml',     val:'1次（一次性）' },
-        { name:'注射针头（盒/100支）', val:'100次（一次性）' },
-        { name:'利多卡因麻药 10ml',     val:'5–8次' },
-        { name:'碘伏棉球（包）',        val:'50次' },
-        { name:'无菌手套（盒/100只）', val:'50次' },
-        { name:'光子仪耦合剂 500ml',    val:'100–150次' },
-        { name:'医用冷敷贴（盒/10片）',val:'10次' },
+        { name:'水光针液 2ml/支',        val:'1次（一次性）' },
+        { name:'肉毒素（瓶/100u）',      val:'4–6次（按部位）' },
+        { name:'填充剂/玻尿酸 1ml',      val:'1次（一次性）' },
+        { name:'注射针头（盒/100支）',   val:'100次（一次性）' },
+        { name:'利多卡因麻药 10ml',      val:'5–8次' },
+        { name:'碘伏棉球（包）',         val:'50次' },
+        { name:'无菌手套（盒/100只）',  val:'50次' },
+        { name:'光子仪耦合剂 500ml',     val:'100–150次' },
+        { name:'医用冷敷贴（盒/10片）', val:'10次' },
       ],
     };
-
     var _tipOpen = true;
-    window.tipToggle = function(){
-      _tipOpen = !_tipOpen;
-      var btn = container.querySelector('#tip-toggle-btn');
-      var content = container.querySelector('#tip-content');
-      if(btn) btn.textContent = _tipOpen ? '收起 ▲' : '展开 ▼';
-      if(content) content.style.display = _tipOpen ? '' : 'none';
-    };
-
     var _curTipTab = 'nail';
-    window.tipTab = function(tab, btn){
-      _curTipTab = tab;
-      container.querySelectorAll('.tip-tab-btn').forEach(function(b){ b.classList.remove('active'); });
-      if(btn) btn.classList.add('active');
-      renderTipBody();
-    };
 
     function renderTipBody(){
       var el = container.querySelector('#tip-body');
@@ -1911,9 +1894,24 @@ function renderMaterials(container){
         '</div>';
       }).join('');
     }
-    renderTipBody();
-    // ── end Tip ──
 
+    window.tipToggle = function(){
+      _tipOpen = !_tipOpen;
+      var btn = container.querySelector('#tip-toggle-btn');
+      var content = container.querySelector('#tip-content');
+      if(btn) btn.textContent = _tipOpen ? '收起 ▲' : '展开 ▼';
+      if(content) content.style.display = _tipOpen ? '' : 'none';
+    };
+    window.tipTab = function(tab, btn){
+      _curTipTab = tab;
+      container.querySelectorAll('.tip-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      if(btn) btn.classList.add('active');
+      renderTipBody();
+    };
+
+    renderTipBody(); // 初始渲染美甲数据
+
+    window.catAdd=function(){
       var inp=container.querySelector('#new-cat-inp');
       var name=inp.value.trim();
       if(!name) return shake(inp,'请输入类别名称');
