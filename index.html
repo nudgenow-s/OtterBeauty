@@ -340,6 +340,18 @@ body {
 .prod-row-del { background:none; border:none; cursor:pointer; font-size:16px; color:var(--text-3); padding:0 2px; flex-shrink:0; }
 
 .hidden { display:none !important; }
+
+/* ── 耗材Tip标签 ── */
+.tip-tab-btn {
+  padding:5px 10px; border-radius:16px; border:2px solid #FFE082;
+  background:#fff; font-size:11px; font-weight:800; color:#B8860B;
+  cursor:pointer; font-family:inherit; transition:all .15s;
+}
+.tip-tab-btn.active { background:#FFD000; border-color:#BF9B00; color:#5A4000; }
+.tip-row { display:flex; justify-content:space-between; align-items:baseline; padding:4px 0; border-bottom:1px solid rgba(255,224,130,.4); }
+.tip-row:last-child { border-bottom:none; }
+.tip-item-name { font-size:12px; font-weight:700; color:#5A4000; flex:1; }
+.tip-item-val  { font-size:12px; font-weight:900; color:#B8860B; text-align:right; white-space:nowrap; margin-left:8px; }
 </style>
 </head>
 <body>
@@ -1697,6 +1709,26 @@ function renderMaterials(container){
 
       '<div class="form-card">'+
         '<div class="section-label">添加耗材 / 产品</div>'+
+
+        // ── 💡 行业耗材使用次数参考 Tip ──
+        '<div id="tip-box" style="background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border:2px solid #FFE082;border-radius:14px;padding:12px 14px;margin-bottom:14px">'+
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'+
+            '<span style="font-size:13px;font-weight:900;color:#B8860B">💡 耗材可用次数参考</span>'+
+            '<button onclick="tipToggle()" id="tip-toggle-btn" style="background:none;border:none;font-size:12px;font-weight:800;color:#B8860B;cursor:pointer;font-family:inherit">收起 ▲</button>'+
+          '</div>'+
+          '<div id="tip-content">'+
+            // 行业切换 tab
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px" id="tip-tabs">'+
+              '<button class="tip-tab-btn active" onclick="tipTab(\'nail\',this)">💅 美甲</button>'+
+              '<button class="tip-tab-btn" onclick="tipTab(\'lash\',this)">💜 美睫</button>'+
+              '<button class="tip-tab-btn" onclick="tipTab(\'beauty\',this)">🌿 美容</button>'+
+              '<button class="tip-tab-btn" onclick="tipTab(\'tattoo\',this)">🖌 纹绣</button>'+
+              '<button class="tip-tab-btn" onclick="tipTab(\'medical\',this)">💉 医美</button>'+
+            '</div>'+
+            '<div id="tip-body"></div>'+
+          '</div>'+
+        '</div>'+
+
         '<div class="form-row">'+
           '<div class="form-group half" style="margin-bottom:0"><label class="form-lbl">名称 *</label>'+
             '<input id="m-name" class="form-inp" type="text" placeholder="如：玻尿酸原液"></div>'+
@@ -1792,6 +1824,96 @@ function renderMaterials(container){
     '</div>';
 
     window.catAdd=function(){
+
+    // ── 💡 Tip 数据 & 交互 ──
+    var TIP_DATA = {
+      nail: [
+        { name:'底胶 15ml',         val:'300–350次' },
+        { name:'颜色胶 15ml',        val:'100–130次' },
+        { name:'封层 15ml',          val:'300–350次' },
+        { name:'卸甲水/锡纸套装',    val:'80–120次' },
+        { name:'酒精/清洁液 500ml',  val:'400–600次' },
+        { name:'砂条/锉条（盒装）',  val:'50–80次/支' },
+        { name:'甲油胶延长液 30ml',  val:'80–100次' },
+        { name:'光疗树脂 10g',        val:'60–80次' },
+        { name:'钻饰/贴纸（包）',    val:'30–50次' },
+      ],
+      lash: [
+        { name:'单根嫁接睫毛 12排装', val:'10–15次' },
+        { name:'单根嫁接睫毛 16排装', val:'15–20次' },
+        { name:'三叶草/YY 12排装',    val:'8–12次' },
+        { name:'漫画睫毛套装',         val:'3–6次' },
+        { name:'嫁接胶水 5ml',         val:'60–80次' },
+        { name:'除胶剂 15ml',          val:'80–100次' },
+        { name:'睫毛梳/镊子（套）',   val:'长期使用' },
+        { name:'眼膜/防护贴片（盒）', val:'50–80次' },
+        { name:'底膜/隔离液 10ml',     val:'60–80次' },
+      ],
+      beauty: [
+        { name:'玻尿酸原液 30ml',      val:'60–80次' },
+        { name:'精华液 50ml',           val:'80–100次' },
+        { name:'面膜（箱/30片）',       val:'30次' },
+        { name:'按摩霜/膏 500ml',       val:'100–150次' },
+        { name:'导入营养液 100ml',      val:'80–120次' },
+        { name:'清洁凝胶/洁面 200ml',   val:'60–80次' },
+        { name:'纳米微针（盒/10片）',   val:'10次' },
+        { name:'超声波耦合剂 500ml',    val:'150–200次' },
+        { name:'酒精棉片（包/100片）', val:'100次' },
+      ],
+      tattoo: [
+        { name:'纹绣色料（瓶/5ml）',   val:'40–60次' },
+        { name:'麻药膏 10g',            val:'15–20次' },
+        { name:'定妆液 30ml',           val:'80–100次' },
+        { name:'纹绣针头（盒/20支）',  val:'20次（一次性）' },
+        { name:'纹绣纸巾/棉签（包）',  val:'50–80次' },
+        { name:'保鲜膜（卷）',          val:'200–300次' },
+        { name:'修复霜 15g',            val:'30–50次' },
+        { name:'隐形眉卡（套）',        val:'长期使用' },
+      ],
+      medical: [
+        { name:'水光针液 2ml/支',       val:'1次（一次性）' },
+        { name:'肉毒素（瓶/100u）',     val:'4–6次（按部位）' },
+        { name:'填充剂/玻尿酸 1ml',     val:'1次（一次性）' },
+        { name:'注射针头（盒/100支）', val:'100次（一次性）' },
+        { name:'利多卡因麻药 10ml',     val:'5–8次' },
+        { name:'碘伏棉球（包）',        val:'50次' },
+        { name:'无菌手套（盒/100只）', val:'50次' },
+        { name:'光子仪耦合剂 500ml',    val:'100–150次' },
+        { name:'医用冷敷贴（盒/10片）',val:'10次' },
+      ],
+    };
+
+    var _tipOpen = true;
+    window.tipToggle = function(){
+      _tipOpen = !_tipOpen;
+      var btn = container.querySelector('#tip-toggle-btn');
+      var content = container.querySelector('#tip-content');
+      if(btn) btn.textContent = _tipOpen ? '收起 ▲' : '展开 ▼';
+      if(content) content.style.display = _tipOpen ? '' : 'none';
+    };
+
+    var _curTipTab = 'nail';
+    window.tipTab = function(tab, btn){
+      _curTipTab = tab;
+      container.querySelectorAll('.tip-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      if(btn) btn.classList.add('active');
+      renderTipBody();
+    };
+
+    function renderTipBody(){
+      var el = container.querySelector('#tip-body');
+      if(!el) return;
+      var items = TIP_DATA[_curTipTab] || [];
+      el.innerHTML = items.map(function(item){
+        return '<div class="tip-row">'+
+          '<span class="tip-item-name">'+item.name+'</span>'+
+          '<span class="tip-item-val">'+item.val+'</span>'+
+        '</div>';
+      }).join('');
+    }
+    renderTipBody();
+    // ── end Tip ──
+
       var inp=container.querySelector('#new-cat-inp');
       var name=inp.value.trim();
       if(!name) return shake(inp,'请输入类别名称');
