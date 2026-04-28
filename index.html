@@ -142,7 +142,10 @@ body {
   flex:1; min-width:52px; display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding:9px 2px 7px; border:none; background:none; cursor:pointer; gap:3px;
 }
-.nav-ico { font-size:18px; transition:transform .15s; }
+.nav-ico { width:22px; height:22px; display:flex; align-items:center; justify-content:center; transition:transform .15s; }
+.nav-ico svg { width:22px; height:22px; stroke:var(--text-3); transition:stroke .15s; }
+.nav-btn.active .nav-ico svg { stroke:var(--pink); }
+.nav-btn:active .nav-ico { transform:scale(.88); }
 .nav-lbl { font-size:8px; font-weight:800; color:#AAA; white-space:nowrap; }
 .nav-btn.active .nav-lbl { color:var(--pink); }
 .nav-btn.active .nav-ico { transform:scale(1.18); }
@@ -179,7 +182,8 @@ body {
 .btn-ghost:active { transform:translateY(3px); box-shadow:0 1px 0 #CECECE; }
 
 /* ── 页面通用 ── */
-.page-title-bar { display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+.page-title-bar { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.page-title-bar .ic-wrap svg { stroke:var(--pink); }
 .page-title-icon { font-size:24px; }
 .page-title-text { font-size:22px; font-weight:900; color:var(--text); flex:1; }
 .section-label { font-size:12px; font-weight:800; color:var(--text-3); text-transform:uppercase; letter-spacing:.06em; margin:18px 0 10px; }
@@ -357,10 +361,18 @@ body {
 <body>
 
 <div class="topbar">
-  <div class="topbar-logo">🦦 獭掌柜·美业版</div>
+  <div class="topbar-logo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px;stroke:var(--pink)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>獭掌柜·美业版
+  </div>
   <div class="topbar-stats">
-    <div class="stat-chip">🔥 <span id="streak-val">0</span></div>
-    <div class="stat-chip">💅 <span id="days-val">0</span> 天</div>
+    <div class="stat-chip">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      <span id="streak-val">0</span>
+    </div>
+    <div class="stat-chip">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span id="days-val">0</span> 天
+    </div>
   </div>
 </div>
 
@@ -391,25 +403,32 @@ body {
 
 <div class="bottom-nav">
   <button class="nav-btn active" data-view="calendar" onclick="switchTab(this,'calendar')">
-    <span class="nav-ico">📅</span><span class="nav-lbl">日历</span>
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+    <span class="nav-lbl">日历</span>
   </button>
   <button class="nav-btn" data-view="orders" onclick="switchTab(this,'orders')">
-    <span class="nav-ico">📋</span><span class="nav-lbl">订单</span>
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>
+    <span class="nav-lbl">订单</span>
   </button>
   <button class="nav-btn" data-view="ranking" onclick="switchTab(this,'ranking')">
-    <span class="nav-ico">📊</span><span class="nav-lbl">排行</span>
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+    <span class="nav-lbl">排行</span>
   </button>
   <button class="nav-btn" data-view="materials" onclick="switchTab(this,'materials')">
-    <span class="nav-ico">🧴</span><span class="nav-lbl">库存</span>
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+    <span class="nav-lbl">库存</span>
   </button>
   <button class="nav-btn" data-view="technicians" onclick="switchTab(this,'technicians')">
-    <span class="nav-ico">💅</span><span class="nav-lbl">技师</span>
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+    <span class="nav-lbl">技师</span>
   </button>
   <button class="nav-btn" data-view="neworder" onclick="switchTab(this,'neworder')">
-    <span class="nav-ico">➕</span><span class="nav-lbl">新建订单</span>
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
+    <span class="nav-lbl">新建</span>
   </button>
   <button class="nav-btn" data-view="acquire" onclick="switchTab(this,'acquire')">
-    <span class="nav-ico">📣</span><span class="nav-lbl">获客成本</span>
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+    <span class="nav-lbl">获客</span>
   </button>
 </div>
 
@@ -426,6 +445,46 @@ body {
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════════════════
+//  ICONS — Lucide SVG inline helper
+// ══════════════════════════════════════════════════════════════════
+var IC = {
+  calendar:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  clipboard:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>',
+  barChart:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  package:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+  users:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  plusCircle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+  activity:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+  star:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  check:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  x:          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  gift:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>',
+  shoppingBag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
+  sparkles:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v1m0 16v1M4.22 4.22l.7.7m12.16 12.16.7.7M3 12h1m16 0h1M4.22 19.78l.7-.7M18.36 5.64l.7-.7"/><circle cx="12" cy="12" r="4"/></svg>',
+  megaphone:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>',
+  trendUp:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+  scissors:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>',
+  droplet:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>',
+  medal:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="6"/><path d="M9 2h6l1 6H8z"/></svg>',
+  wallet:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+  info:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+  lock:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+  trophy:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-2"/><rect x="6" y="18" width="12" height="4"/></svg>',
+  tag:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+  dollar:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+  trash:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
+  plus:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  save:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
+};
+// icon() 生成指定尺寸的 SVG span
+function icon(name, size, color){
+  size=size||20; color=color||'currentColor';
+  return '<span style="display:inline-flex;align-items:center;justify-content:center;width:'+size+'px;height:'+size+'px;flex-shrink:0" class="ic-wrap">'+
+    IC[name].replace('stroke="currentColor"','stroke="'+color+'"').replace(/viewBox/,'width="'+size+'" height="'+size+'" viewBox')+
+  '</span>';
+}
+
 // ══════════════════════════════════════════════════════════════════
 //  ENGINE
 // ══════════════════════════════════════════════════════════════════
@@ -782,7 +841,11 @@ function buildSnake(){
 
     if(isToday){ var tg=document.createElement('div'); tg.className='today-tag'; tg.textContent='今天'; node.appendChild(tg); }
     var ne=document.createElement('div'); ne.className='nd-num'; ne.textContent=day; node.appendChild(ne);
-    var ie=document.createElement('div'); ie.className='nd-ico'; ie.textContent=isToday?'⭐':hasSales?'✓':isPast?'✗':''; node.appendChild(ie);
+    var ie=document.createElement('div'); ie.className='nd-ico';
+    if(isToday){ ie.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'; }
+    else if(hasSales){ ie.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'; }
+    else if(isPast){ ie.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'; }
+    else { ie.textContent=''; } node.appendChild(ie);
 
     (function(d,k,dat,iT,iF,iP,hS){ node.onclick=function(){ openSheet(d,k,dat,iT,iF,iP,hS); }; })(day,key,data,isToday,isFuture,isPast,hasSales);
     track.appendChild(node);
@@ -790,12 +853,13 @@ function buildSnake(){
 
   var mi=Math.floor(DAYS/2), mp=coords[mi];
   var mas=document.createElement('div'); mas.className='mascot-node';
-  mas.style.left=(mp.x+(mp.x>W*.5?-80:80))+'px'; mas.style.top=mp.y+'px'; mas.textContent='🦦';
+  mas.style.left=(mp.x+(mp.x>W*.5?-80:80))+'px'; mas.style.top=mp.y+'px';
+  mas.innerHTML='<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 6px 10px rgba(255,107,157,.25))"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="3"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="3"/></svg>';
   track.appendChild(mas);
 
   var cp=coords[DAYS], ch=document.createElement('div'); ch.className='chest-node';
   ch.style.left=cp.x+'px'; ch.style.top=cp.y+'px';
-  ch.innerHTML='<div class="ch-icon">'+(TODAY>=DAYS?'🏆':'🔒')+'</div><div class="ch-label">月度总结</div>';
+  ch.innerHTML='<div class="ch-icon">'+(TODAY>=DAYS?IC.trophy.replace('viewBox','width="36" height="36" viewBox'):IC.lock.replace('viewBox','width="32" height="32" viewBox'))+'</div><div class="ch-label">月度总结</div>';
   ch.onclick=openChest; track.appendChild(ch);
 }
 
@@ -820,7 +884,7 @@ function openSheet(day,key,data,isToday,isFuture,isPast,hasSales){
       '<div class="mc"><div class="mc-lbl">毛利</div><div class="mc-val '+(prof>=0?'g':'r')+'">'+Engine.fmtMoney(prof)+'</div></div>'+
       '<div class="mc"><div class="mc-lbl">变动成本</div><div class="mc-val">'+Engine.fmtMoney(varC)+'</div></div>'+
       '<div class="mc"><div class="mc-lbl">毛利率</div><div class="mc-val '+(gm&&gm>=50?'g':'p')+'">'+(gm?Engine.fmtMargin(gm):'—')+'</div></div>';
-    br.innerHTML=isToday?'<button class="btn-sh btn-primary" onclick="closeSheet();switchTab(null,\'neworder\')"><span>✨</span> 新建订单</button>':'';
+    br.innerHTML=isToday?'<button class="btn-sh btn-primary" onclick="closeSheet();switchTab(null,\'neworder\')">'+icon('plusCircle',16,'#fff')+' 新建订单</button>':'';
   }
   document.getElementById('overlay').classList.add('open');
 }
@@ -870,11 +934,11 @@ function renderNewOrder(container){
   var giftItems=[];   // { matId, name, unitCost, qty }
 
   var PROJECT_TYPES=[
-    { val:'lash',    label:'💜 美睫', rateKey:'lashRate'    },
-    { val:'nail',    label:'💅 美甲', rateKey:'nailRate'    },
-    { val:'beauty',  label:'🌿 美容', rateKey:'beautyRate'  },
-    { val:'tattoo',  label:'🖌 纹绣',  rateKey:'tattooRate'  },
-    { val:'medical', label:'💉 医美', rateKey:'medicalRate' },
+    { val:'lash',    label:'美睫', rateKey:'lashRate'    },
+    { val:'nail',    label:'美甲', rateKey:'nailRate'    },
+    { val:'beauty',  label:'美容', rateKey:'beautyRate'  },
+    { val:'tattoo',  label:'纹绣', rateKey:'tattooRate'  },
+    { val:'medical', label:'医美', rateKey:'medicalRate' },
   ];
 
   // 耗材选择器（含产品，用于BOM）
@@ -907,7 +971,7 @@ function renderNewOrder(container){
   }
 
   container.innerHTML='<div>'+
-    '<div class="page-title-bar"><span class="page-title-icon">✨</span><span class="page-title-text">新建订单</span></div>'+
+    '<div class="page-title-bar">'+icon('sparkles',24,'var(--pink)')+'<span class="page-title-text">新建订单</span></div>'+
     '<div class="form-subtitle">服务 · 产品销售 · 赠品均在此页面完成</div>'+
 
     // ── 项目信息 ──
@@ -991,7 +1055,7 @@ function renderNewOrder(container){
       '<div id="cost-preview"><div style="color:var(--text-3);font-size:13px">填写售价后显示预览</div></div>'+
     '</div>'+
 
-    '<button class="form-submit" onclick="noSubmit()">✨ 保存服务订单</button>'+
+    '<button class="form-submit" onclick="noSubmit()">'+icon('save',18,'#fff')+' 保存服务订单</button>'+
     '<div class="form-success hidden" id="o-succ">✅ 服务订单已记录！</div>'+
 
     // ══════════════════════════════════════════════════════════
@@ -999,7 +1063,7 @@ function renderNewOrder(container){
     // ══════════════════════════════════════════════════════════
     '<div style="margin-top:20px">'+
       '<div class="form-card" style="border:2px solid #C0E0C8">'+
-        '<div class="section-label" style="color:var(--green)">🛍 本次产品销售（选填）</div>'+
+        '<div class="section-label" style="color:var(--green);display:flex;align-items:center;gap:6px">'+icon('shoppingBag',14,'var(--green)')+'本次产品销售（选填）</div>'+
         '<div style="font-size:11px;color:var(--text-3);font-weight:700;margin-bottom:12px">'+
           '随单销售产品 · 成本自动计入变动成本 · 售价可修改'+
         '</div>'+
@@ -1053,7 +1117,7 @@ function renderNewOrder(container){
     // ══════════════════════════════════════════════════════════
     '<div style="margin-top:4px">'+
       '<div class="form-card" style="border:2px solid #FFE082">'+
-        '<div class="section-label" style="color:var(--gold)">🎁 本次赠品发放（选填）</div>'+
+        '<div class="section-label" style="color:var(--gold);display:flex;align-items:center;gap:6px">'+icon('gift',14,'var(--gold)')+'本次赠品发放（选填）</div>'+
         '<div style="font-size:11px;color:var(--text-3);font-weight:700;margin-bottom:12px">'+
           '赠予客户产品 · 售价为零 · <b>成本仍计入变动成本</b> · 自动扣减库存'+
         '</div>'+
@@ -1094,7 +1158,7 @@ function renderNewOrder(container){
     '</div>'+
 
     // 一键保存全部
-    '<button class="form-submit" style="margin-top:8px;background:linear-gradient(90deg,var(--pink),var(--purple));box-shadow:0 5px 0 var(--pink-dk)" onclick="noSubmitAll()">🎀 一键保存服务 + 销售 + 赠品</button>'+
+    '<button class="form-submit" style="margin-top:8px;background:linear-gradient(90deg,var(--pink),var(--purple));box-shadow:0 5px 0 var(--pink-dk)" onclick="noSubmitAll()">'+icon('save',18,'#fff')+' 一键保存服务 + 销售 + 赠品</button>'+
     '<div class="form-success hidden" id="o-succ-all">✅ 全部已记录！库存已同步扣减</div>'+
 
     '<div style="height:20px"></div>'+
@@ -1356,17 +1420,17 @@ function renderNewOrder(container){
         '<span style="font-size:'+(big?'16':'14')+'px;font-weight:'+(big?900:800)+';color:'+(col||'var(--text)')+'">'+val+'</span>'+
       '</div>';
     }
-    var html=row('🏷 券面价 / 售价','¥'+face.toFixed(2));
+    var html=row('券面价 / 售价','¥'+face.toFixed(2));
     if(isOnline){
       html+=row('  ↳ 平台佣金（'+commRate+'%）','-¥'+platformFee.toFixed(2));
       html+=row('  ↳ 实收到账','¥'+actual.toFixed(2));
     }
-    html+=row('🧴 耗材成本','¥'+matTotal.toFixed(2));
-    html+=row('💅 技师提成（'+tr.techRate+'%）','¥'+techCost.toFixed(2));
-    html+=row('📦 变动成本合计','¥'+totalVC.toFixed(2),true);
-    html+=row('💰 毛利润',(grossProfit>=0?'':'−')+'¥'+Math.abs(grossProfit).toFixed(2),true,grossProfit>=0?'var(--green)':'var(--red)');
+    html+=row('耗材成本','¥'+matTotal.toFixed(2));
+    html+=row('技师提成（'+tr.techRate+'%）','¥'+techCost.toFixed(2));
+    html+=row('变动成本合计','¥'+totalVC.toFixed(2),true);
+    html+=row('毛利润',(grossProfit>=0?'':'−')+'¥'+Math.abs(grossProfit).toFixed(2),true,grossProfit>=0?'var(--green)':'var(--red)');
     var mc=margin>=50?'var(--green)':margin>=30?'var(--gold)':'var(--red)';
-    html+=row('📈 毛利率',Engine.fmtMargin(margin),true,mc);
+    html+=row('毛利率',Engine.fmtMargin(margin),true,mc);
     pv.innerHTML=html;
   }
   window.noCalc=noCalc;
@@ -1481,7 +1545,7 @@ function renderOrders(container){
   var typeCls  ={ lash:'tag-lash', nail:'tag-nail', beauty:'tag-beauty', tattoo:'tag-tattoo', medical:'tag-medical' };
 
   container.innerHTML='<div>'+
-    '<div class="page-title-bar"><span class="page-title-icon">📋</span><span class="page-title-text">订单记录</span></div>'+
+    '<div class="page-title-bar">'+icon('clipboard',24,'var(--pink)')+'<span class="page-title-text">订单记录</span></div>'+
     '<div class="rank-tab-row" style="margin-bottom:12px">'+
       '<button class="rank-tab active" onclick="ordTabSwitch(\'service\',this)">服务订单</button>'+
       '<button class="rank-tab" onclick="ordTabSwitch(\'product\',this)">产品/赠品</button>'+
@@ -1604,7 +1668,7 @@ function renderRanking(container){
   var chData=Engine.getChannelRanking(),        chMax=chData.length?chData[0].revenue:1;
 
   container.innerHTML='<div>'+
-    '<div class="page-title-bar"><span class="page-title-icon">📊</span><span class="page-title-text">项目排行</span></div>'+
+    '<div class="page-title-bar">'+icon('barChart',24,'var(--pink)')+'<span class="page-title-text">项目排行</span></div>'+
     '<div class="rank-tab-row">'+
       '<button class="rank-tab active" onclick="rankTab(\'count\',this)">接单量</button>'+
       '<button class="rank-tab" onclick="rankTab(\'profit\',this)">毛利价值</button>'+
@@ -1673,7 +1737,7 @@ function renderMaterials(container){
     var catOptionsHtml=cats.map(function(c){ return '<option>'+c+'</option>'; }).join('');
 
     container.innerHTML='<div>'+
-      '<div class="page-title-bar"><span class="page-title-icon">🧴</span><span class="page-title-text">库存管理</span></div>'+
+      '<div class="page-title-bar">'+icon('package',24,'var(--pink)')+'<span class="page-title-text">库存管理</span></div>'+
 
       '<div class="inv-summary-grid">'+
         '<div class="inv-sum-card purchase">'+
@@ -1765,7 +1829,7 @@ function renderMaterials(container){
           '<span style="font-size:11px;color:var(--text-3);font-weight:700" id="m-stock-value"></span>'+
         '</div>'+
         '<div style="height:12px"></div>'+
-        '<button class="form-submit" onclick="mSubmit()">🧴 添加</button>'+
+        '<button class="form-submit" onclick="mSubmit()">'+icon('plus',18,'#fff')+' 添加</button>'+
         '<div class="form-success hidden" id="m-succ">✅ 已添加！</div>'+
       '</div>'+
 
@@ -1990,7 +2054,7 @@ function renderTechnicians(container){
   function draw(){
     var list=Engine.getTechnicians();
     container.innerHTML='<div>'+
-      '<div class="page-title-bar"><span class="page-title-icon">💅</span><span class="page-title-text">技师档案</span></div>'+
+      '<div class="page-title-bar">'+icon('users',24,'var(--pink)')+'<span class="page-title-text">技师档案</span></div>'+
       '<div class="form-subtitle">为每位技师设置各项目提成比例</div>'+
       '<div class="form-card">'+
         '<div class="form-group"><label class="form-lbl">技师姓名 *</label>'+
@@ -2013,7 +2077,7 @@ function renderTechnicians(container){
           '<div class="form-group half" style="margin-bottom:0"></div>'+
         '</div>'+
         '<div style="height:12px"></div>'+
-        '<button class="form-submit" onclick="tSubmit()">💅 添加技师</button>'+
+        '<button class="form-submit" onclick="tSubmit()">'+icon('plus',18,'#fff')+' 添加技师</button>'+
         '<div class="form-success hidden" id="t-succ">✅ 技师已添加！</div>'+
       '</div>'+
       '<div class="section-label">技师团队（'+list.length+'人）</div>'+
@@ -2069,7 +2133,7 @@ function renderAcquire(container){
     var cpOrder=totalOrders>0?summary.total/totalOrders:0;
 
     container.innerHTML='<div>'+
-      '<div class="page-title-bar"><span class="page-title-icon">📣</span><span class="page-title-text">获客成本</span></div>'+
+      '<div class="page-title-bar">'+icon('megaphone',24,'var(--pink)')+'<span class="page-title-text">获客成本</span></div>'+
 
       '<div class="form-card" style="background:linear-gradient(135deg,#FFF0F5,#F0F0FF);border:2px solid var(--border)">'+
         '<div class="form-row" style="margin-bottom:0">'+
@@ -2114,7 +2178,7 @@ function renderAcquire(container){
             '<input id="acq-note" class="form-inp" type="text" placeholder="第一周爆款视频…"></div>'+
         '</div>'+
         '<div style="height:12px"></div>'+
-        '<button class="form-submit" onclick="acqSubmit()">📣 记录费用</button>'+
+        '<button class="form-submit" onclick="acqSubmit()">'+icon('plus',18,'#fff')+' 记录费用</button>'+
         '<div class="form-success hidden" id="acq-succ">✅ 投流费用已记录！</div>'+
       '</div>'+
 
