@@ -841,11 +841,7 @@ function buildSnake(){
 
     if(isToday){ var tg=document.createElement('div'); tg.className='today-tag'; tg.textContent='今天'; node.appendChild(tg); }
     var ne=document.createElement('div'); ne.className='nd-num'; ne.textContent=day; node.appendChild(ne);
-    var ie=document.createElement('div'); ie.className='nd-ico';
-    if(isToday){ ie.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'; }
-    else if(hasSales){ ie.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'; }
-    else if(isPast){ ie.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'; }
-    else { ie.textContent=''; } node.appendChild(ie);
+    var ie=document.createElement('div'); ie.className='nd-ico'; ie.textContent=isToday?'⭐':hasSales?'✓':isPast?'✗':''; node.appendChild(ie);
 
     (function(d,k,dat,iT,iF,iP,hS){ node.onclick=function(){ openSheet(d,k,dat,iT,iF,iP,hS); }; })(day,key,data,isToday,isFuture,isPast,hasSales);
     track.appendChild(node);
@@ -853,13 +849,12 @@ function buildSnake(){
 
   var mi=Math.floor(DAYS/2), mp=coords[mi];
   var mas=document.createElement('div'); mas.className='mascot-node';
-  mas.style.left=(mp.x+(mp.x>W*.5?-80:80))+'px'; mas.style.top=mp.y+'px';
-  mas.innerHTML='<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 6px 10px rgba(255,107,157,.25))"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9" stroke-width="3"/><line x1="15" y1="9" x2="15.01" y2="9" stroke-width="3"/></svg>';
+  mas.style.left=(mp.x+(mp.x>W*.5?-80:80))+'px'; mas.style.top=mp.y+'px'; mas.textContent='🦦';
   track.appendChild(mas);
 
   var cp=coords[DAYS], ch=document.createElement('div'); ch.className='chest-node';
   ch.style.left=cp.x+'px'; ch.style.top=cp.y+'px';
-  ch.innerHTML='<div class="ch-icon">'+(TODAY>=DAYS?IC.trophy.replace('viewBox','width="36" height="36" viewBox'):IC.lock.replace('viewBox','width="32" height="32" viewBox'))+'</div><div class="ch-label">月度总结</div>';
+  ch.innerHTML='<div class="ch-icon">'+(TODAY>=DAYS?'🏆':'🔒')+'</div><div class="ch-label">月度总结</div>';
   ch.onclick=openChest; track.appendChild(ch);
 }
 
